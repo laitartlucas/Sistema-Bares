@@ -1,0 +1,38 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html { @apply font-sans; background: #F1F5F9; }
+  body { @apply text-slate-900 antialiased; min-height: 100dvh; }
+  h1, h2, h3 { @apply font-display; }
+  * { -webkit-tap-highlight-color: transparent; }
+}
+
+@layer components {
+  .sidebar-item {
+    @apply flex items-center gap-3 px-4 py-3 rounded-xl text-slate-400 font-medium
+           transition-all duration-150 hover:bg-white/10 hover:text-white cursor-pointer;
+  }
+  .sidebar-item.active {
+    @apply bg-pizza-red text-white shadow-lg shadow-pizza-red/30;
+  }
+
+  /* KDS column scroll */
+  .kds-col { @apply flex flex-col gap-3 overflow-y-auto; max-height: calc(100dvh - 140px); }
+  .kds-col::-webkit-scrollbar { width: 4px; }
+  .kds-col::-webkit-scrollbar-track { @apply bg-transparent; }
+  .kds-col::-webkit-scrollbar-thumb { @apply bg-slate-300 rounded-full; }
+
+  /* Switch toggle */
+  .toggle { @apply relative inline-flex cursor-pointer; }
+  .toggle input { @apply sr-only; }
+  .toggle-track {
+    @apply w-11 h-6 bg-slate-200 rounded-full transition-colors duration-200;
+  }
+  .toggle input:checked ~ .toggle-track { @apply bg-emerald-500; }
+  .toggle-thumb {
+    @apply absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full shadow transition-transform duration-200;
+  }
+  .toggle input:checked ~ .toggle-thumb { @apply translate-x-5; }
+}

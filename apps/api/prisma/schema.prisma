@@ -1,0 +1,225 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ── Usuários e Endereços ──────────────────────────────────────────────────────
+
+model User {
+  id        String    @id @default(cuid())
+  nome      String
+  telefone  String    @unique
+  username  String?   @unique
+  senha     String
+  papel     Role      @default(CLIENTE)
+  enderecos Address[]
+  pedidos   Order[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  @@map("users")
+}
+
+enum Role {
+  CLIENTE
+  ADMIN
+}
+
+model Address {
+  id          String  @id @default(cuid())
+  rua         String
+  numero      String
+  bairro      String
+  complemento String?
+  referencia  String?
+  principal   Boolean @default(false)
+  userId      String
+  user        User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("addresses")
+}
+
+// ── Cardápio ──────────────────────────────────────────────────────────────────
+
+model PizzaSize {
+  id         String      @id @default(cuid())
+  nome       String
+  preco      Decimal     @db.Decimal(10, 2) @default(0)
+  pedacos    Int         @default(0)
+  maxSabores Int
+  ordem      Int
+  ativo      Boolean     @default(true)
+  orderItems OrderItem[]
+
+  @@map("pizza_sizes")
+}
+
+model Crust {
+  id         String      @id @default(cuid())
+  nome       String
+  preco      Decimal     @db.Decimal(10, 2) @default(0)
+  ativo      Boolean     @default(true)
+  orderItems OrderItem[]
+
+  @@map("crusts")
+}
+
+model Flavor {
+  id          String            @id @default(cuid())
+  nome        String
+  descricao   String?
+  preco       Decimal           @db.Decimal(10, 2)
+  categoria   FlavorCategory
+  ativo       Boolean           @default(true)
+  imagemUrl   String?
+  orderItems  OrderItemFlavor[]
+
+  @@map("flavors")
+}
+
+enum FlavorCategory {
+  SALGADA
+  DOCE
+}
+
+model Beverage {
+  id         String      @id @default(cuid())
+  nome       String
+  preco      Decimal     @db.Decimal(10, 2)
+  volume     String?
+  ativo      Boolean     @default(true)
+  imagemUrl  String?
+  orderItems OrderItem[]
+
+  @@map("beverages")
+}
+
+// ── Pedidos ───────────────────────────────────────────────────────────────────
+
+model Order {
+  id              String        @id @default(cuid())
+  numero          Int           @unique @default(autoincrement())
+  userId          String
+  user            User          @relation(fields: [userId], references: [id])
+  tipo            OrderType
+  // Snapshot do endereço no momento do pedido (imutável após criação)
+  enderecoEntrega Json?
+  formaPagamento  PaymentMethod
+  trocoPara       Decimal?      @db.Decimal(10, 2)
+  status          OrderStatus   @default(RECEBIDO)
+  total           Decimal       @db.Decimal(10, 2)
+  itens           OrderItem[]
+  printJobs       PrintJob[]
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
+  @@map("orders")
+}
+
+enum OrderType {
+  ENTREGA
+  RETIRADA
+}
+
+enum PaymentMethod {
+  DINHEIRO
+  PIX
+  CARTAO
+}
+
+enum OrderStatus {
+  RECEBIDO
+  EM_PREPARO
+  PRONTO
+  SAIU_PARA_ENTREGA
+  ENTREGUE
+  CANCELADO
+}
+
+model OrderItem {
+  id            String            @id @default(cuid())
+  orderId       String
+  order         Order             @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  tipo          ItemType
+  // Pizza
+  tamanhoId     String?
+  tamanho       PizzaSize?        @relation(fields: [tamanhoId], references: [id])
+  bordaId       String?
+  borda         Crust?            @relation(fields: [bordaId], references: [id])
+  sabores       OrderItemFlavor[]
+  // Bebida
+  bebidaId      String?
+  bebida        Beverage?         @relation(fields: [bebidaId], references: [id])
+  quantidade    Int               @default(1)
+  precoUnitario Decimal           @db.Decimal(10, 2)
+  observacoes   String?
+
+  @@map("order_items")
+}
+
+enum ItemType {
+  PIZZA
+  BEBIDA
+}
+
+model OrderItemFlavor {
+  id          String    @id @default(cuid())
+  orderItemId String
+  orderItem   OrderItem @relation(fields: [orderItemId], references: [id], onDelete: Cascade)
+  flavorId    String
+  flavor      Flavor    @relation(fields: [flavorId], references: [id])
+
+  @@unique([orderItemId, flavorId])
+  @@map("order_item_flavors")
+}
+
+// ── Impressão ─────────────────────────────────────────────────────────────────
+
+model PrintJob {
+  id         String         @id @default(cuid())
+  orderId    String
+  order      Order          @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  tipo       PrintJobType
+  status     PrintJobStatus @default(PENDENTE)
+  tentativas Int            @default(0)
+  erro       String?
+  createdAt  DateTime       @default(now())
+  updatedAt  DateTime       @updatedAt
+
+  @@map("print_jobs")
+}
+
+enum PrintJobType {
+  COZINHA
+  CAIXA
+}
+
+enum PrintJobStatus {
+  PENDENTE
+  IMPRESSO
+  ERRO
+}
+
+// ── Configuração da Loja ──────────────────────────────────────────────────────
+
+model StoreConfig {
+  id                   String          @id @default(cuid())
+  nome                 String
+  endereco             String?
+  telefone             String?
+  taxaEntrega          Decimal         @db.Decimal(10, 2) @default(0)
+  horarioFuncionamento String?
+  calcPrecoSabor       PriceCalcMethod @default(MAIOR_PRECO)
+  updatedAt            DateTime        @updatedAt
+
+  @@map("store_config")
+}
+
+enum PriceCalcMethod {
+  MAIOR_PRECO
+  MEDIA_PRECO
+}

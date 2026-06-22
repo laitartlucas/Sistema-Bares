@@ -1,0 +1,24 @@
+{
+  "name": "@pizzaria/print-agent",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Agente de impressão térmica para a pizzaria",
+  "main": "dist/index.js",
+  "scripts": {
+    "dev":   "ts-node-dev --respawn --transpile-only src/index.ts",
+    "build": "tsc",
+    "start": "node dist/index.js"
+  },
+  "dependencies": {
+    "@pizzaria/shared": "*",
+    "axios": "^1.7.2",
+    "dotenv": "^16.4.5",
+    "node-thermal-printer": "^4.3.3",
+    "socket.io-client": "^4.7.5"
+  },
+  "devDependencies": {
+    "@types/node": "^20.14.5",
+    "ts-node-dev": "^2.0.0",
+    "typescript": "^5.4.5"
+  }
+}
