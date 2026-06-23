@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { MapPin, ShoppingBag, Phone, User, Printer, ChevronRight } from 'lucide-react'
+import { MapPin, ShoppingBag, Phone, User, Printer, ChevronRight, Ban } from 'lucide-react'
 import type { Order, OrderStatus } from '@pizzaria/shared'
 import { ORDER_STATUS_LABELS, PAYMENT_METHOD_LABELS, getNextStatus } from '@pizzaria/shared'
 import { adminOrdersApi } from '../../api/orders'
@@ -26,6 +26,7 @@ export function OrderDetail({ order, onStatusChange }: Props) {
   const { toast } = useToast()
 
   const nextStatus: OrderStatus | null = getNextStatus(order.tipo, order.status)
+  const canCancel = order.status !== 'ENTREGUE' && order.status !== 'CANCELADO'
 
   async function advance() {
     if (!nextStatus) return
@@ -36,6 +37,20 @@ export function OrderDetail({ order, onStatusChange }: Props) {
       toast(`Status → ${ORDER_STATUS_LABELS[nextStatus]}`, 'success')
     } catch {
       toast('Erro ao atualizar status', 'error')
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  async function cancel() {
+    if (!window.confirm('Cancelar este pedido? Essa ação não pode ser desfeita.')) return
+    setLoading(true)
+    try {
+      await adminOrdersApi.updateStatus(order.id, 'CANCELADO')
+      onStatusChange(order.id, 'CANCELADO')
+      toast('Pedido cancelado', 'success')
+    } catch {
+      toast('Erro ao cancelar pedido', 'error')
     } finally {
       setLoading(false)
     }
@@ -154,6 +169,11 @@ export function OrderDetail({ order, onStatusChange }: Props) {
         <Button variant="secondary" loading={loading} onClick={reprint} leftIcon={<Printer size={14} />}>
           Reimprimir
         </Button>
+        {canCancel && (
+          <Button variant="danger" loading={loading} onClick={cancel} leftIcon={<Ban size={14} />}>
+            Cancelar
+          </Button>
+        )}
       </div>
     </div>
   )

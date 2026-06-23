@@ -32,7 +32,6 @@ type CartAction =
   | { type: 'UPDATE_QTY';   id: string; qty: number }
   | { type: 'REMOVE';       id: string }
   | { type: 'CLEAR' }
-  | { type: 'HYDRATE';      items: CartItem[] }
 
 function cartReducer(state: CartItem[], action: CartAction): CartItem[] {
   switch (action.type) {
@@ -62,9 +61,6 @@ function cartReducer(state: CartItem[], action: CartAction): CartItem[] {
     case 'CLEAR':
       return []
 
-    case 'HYDRATE':
-      return action.items
-
     default:
       return state
   }
@@ -87,16 +83,17 @@ const CartContext = createContext<CartContextValue | null>(null)
 
 const CART_KEY = 'pizzaria_cart'
 
-export function CartProvider({ children }: { children: React.ReactNode }) {
-  const [items, dispatch] = useReducer(cartReducer, [])
+function readSavedCart(): CartItem[] {
+  try {
+    const saved = localStorage.getItem(CART_KEY)
+    return saved ? JSON.parse(saved) : []
+  } catch {
+    return []
+  }
+}
 
-  // Hidrata do localStorage
-  useEffect(() => {
-    try {
-      const saved = localStorage.getItem(CART_KEY)
-      if (saved) dispatch({ type: 'HYDRATE', items: JSON.parse(saved) })
-    } catch { /* ignore */ }
-  }, [])
+export function CartProvider({ children }: { children: React.ReactNode }) {
+  const [items, dispatch] = useReducer(cartReducer, [], readSavedCart)
 
   // Persiste no localStorage
   useEffect(() => {

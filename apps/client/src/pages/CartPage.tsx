@@ -107,7 +107,7 @@ export default function CartPage() {
 
         {/* Adicionar mais */}
         <button
-          onClick={() => navigate('/pizza/build')}
+          onClick={() => navigate('/')}
           className="w-full border-2 border-dashed border-brand-200 rounded-3xl py-4 text-pizza-red font-semibold text-sm hover:bg-brand-50 transition-colors flex items-center justify-center gap-2"
         >
           <Plus size={16} />
