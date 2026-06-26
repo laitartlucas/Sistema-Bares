@@ -1,5 +1,5 @@
 import { api } from './client'
-import type { Order, OrderStatus } from '@pizzaria/shared'
+import type { Order, OrderStatus, ReportFilters, SalesReport } from '@pizzaria/shared'
 
 interface OrderListResult {
   items: Order[]
@@ -9,11 +9,16 @@ interface OrderListResult {
   pages: number
 }
 
-interface DailyReport {
-  date: string
-  totalPedidos: number
-  faturamento: number
-  topSabores: { nome: string; count: number }[]
+function reportQuery(f: ReportFilters = {}): string {
+  const q = new URLSearchParams()
+  if (f.from)           q.set('from', f.from)
+  if (f.to)             q.set('to', f.to)
+  if (f.status)         q.set('status', f.status)
+  if (f.formaPagamento) q.set('formaPagamento', f.formaPagamento)
+  if (f.saborId)        q.set('saborId', f.saborId)
+  if (f.categoria)      q.set('categoria', f.categoria)
+  const s = q.toString()
+  return s ? `?${s}` : ''
 }
 
 export interface ManualOrderPayload {
@@ -46,7 +51,8 @@ export const adminOrdersApi = {
   updateStatus: (id: string, status: OrderStatus) =>
     api.patch<Order>(`/admin/orders/${id}/status`, { status }),
   reprint:      (id: string)                  => api.post<{ queued: number }>(`/admin/orders/${id}/reprint`, {}),
-  dailyReport:  (date?: string)               =>
-    api.get<DailyReport>(`/admin/orders/report/daily${date ? `?date=${date}` : ''}`),
+  salesReport:  (filters?: ReportFilters)     => api.get<SalesReport>(`/admin/orders/report${reportQuery(filters)}`),
+  printReport:  (filters?: ReportFilters)     =>
+    api.post<{ queued: number; jobId: string }>(`/admin/orders/report/print${reportQuery(filters)}`, {}),
   createManual: (data: ManualOrderPayload)    => api.post<Order>('/admin/manual-order', data),
 }

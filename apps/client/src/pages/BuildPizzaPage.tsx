@@ -131,9 +131,9 @@ export default function BuildPizzaPage() {
   return (
     <Layout hideNav>
       {/* Header fixo */}
-      <div className="sticky top-0 z-30 bg-white/95 backdrop-blur-md border-b border-gray-100 pt-safe">
+      <div className="sticky top-0 z-30 glass border-b border-brand-100/70 pt-safe">
         <div className="flex items-center gap-3 px-4 py-3">
-          <button onClick={goBack} className="w-9 h-9 rounded-xl bg-brand-50 flex items-center justify-center text-pizza-red press-effect">
+          <button onClick={goBack} className="w-9 h-9 rounded-2xl bg-white shadow-card flex items-center justify-center text-pizza-red press-effect">
             <ArrowLeft size={18} />
           </button>
           <div className="flex-1">
@@ -153,8 +153,8 @@ export default function BuildPizzaPage() {
             <div
               key={s}
               className={cn(
-                'flex-1 h-1 rounded-full transition-all duration-300',
-                i <= stepIndex ? 'bg-pizza-red' : 'bg-gray-200',
+                'flex-1 h-1.5 rounded-full transition-all duration-300',
+                i <= stepIndex ? 'bg-brand-flame' : 'bg-brand-100',
               )}
             />
           ))}
@@ -321,9 +321,10 @@ export default function BuildPizzaPage() {
       {step === 'summary' && selectedSize && selectedCrust && (
         <div className="px-4 py-5 flex flex-col gap-4 animate-fade-in pb-36">
           {/* Pizza preview */}
-          <div className="bg-white rounded-3xl shadow-soft overflow-hidden">
-            <div className="bg-gradient-to-br from-brand-400 to-pizza-red h-32 flex items-center justify-center text-6xl">
-              🍕
+          <div className="bg-white rounded-4xl shadow-card-lg overflow-hidden">
+            <div className="relative bg-brand-flame h-36 flex items-center justify-center text-6xl overflow-hidden">
+              <div className="absolute inset-0 bg-hero-pattern opacity-50" />
+              <span className="relative animate-float drop-shadow-lg">🍕</span>
             </div>
             <div className="p-4 flex flex-col gap-3">
               <div>
@@ -384,7 +385,7 @@ export default function BuildPizzaPage() {
       )}
 
       {/* ── Botão fixo de avançar ─────────────────────────────────────────────── */}
-      <div className="fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-md border-t border-gray-100 px-4 py-4 pb-safe z-30">
+      <div className="fixed bottom-0 left-0 right-0 glass border-t border-brand-100/70 px-4 py-4 pb-safe z-30">
         {step !== 'summary' ? (
           <Button
             fullWidth

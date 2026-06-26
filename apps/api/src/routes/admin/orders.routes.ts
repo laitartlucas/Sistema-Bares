@@ -1,6 +1,6 @@
 import { Router, Request, Response, NextFunction } from 'express'
 import { validate } from '../../middleware/validate'
-import { updateOrderStatusSchema, listOrdersQuerySchema } from '../../schemas/order'
+import { updateOrderStatusSchema, listOrdersQuerySchema, reportFiltersSchema } from '../../schemas/order'
 import * as orderService from '../../services/order.service'
 import * as printService from '../../services/print.service'
 
@@ -43,11 +43,19 @@ router.get('/:id/print-jobs', async (req: Request, res: Response, next: NextFunc
   } catch (err) { next(err) }
 })
 
-// GET /api/admin/orders/report/daily?date=2024-06-01
-router.get('/report/daily', async (req: Request, res: Response, next: NextFunction) => {
+// GET /api/admin/orders/report?from=&to=&status=&formaPagamento=&saborId=&categoria=
+router.get('/report', validate(reportFiltersSchema, 'query'), async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const report = await orderService.adminDailyReport(req.query.date as string | undefined)
+    const report = await orderService.adminSalesReport(req.query as any)
     res.json({ success: true, data: report })
+  } catch (err) { next(err) }
+})
+
+// POST /api/admin/orders/report/print — enfileira o fechamento na impressora
+router.post('/report/print', validate(reportFiltersSchema, 'query'), async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const result = await orderService.adminPrintReport(req.query as any)
+    res.json({ success: true, data: result })
   } catch (err) { next(err) }
 })
 

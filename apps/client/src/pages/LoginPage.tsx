@@ -61,14 +61,16 @@ export default function LoginPage() {
   return (
     <div className="min-h-dvh bg-pizza-cream flex flex-col">
       {/* Hero */}
-      <div className="relative bg-pizza-red overflow-hidden pt-safe">
-        <div className="absolute inset-0 bg-hero-pattern opacity-20" />
+      <div className="relative bg-brand-flame overflow-hidden pt-safe">
+        <div className="absolute inset-0 bg-hero-pattern opacity-50" />
+        <div className="absolute -top-12 -left-10 w-48 h-48 rounded-full bg-pizza-cheese/20 blur-3xl" />
         <div className="relative px-6 pt-16 pb-12 text-center">
-          <div className="text-6xl mb-4 animate-bounce-in">🍕</div>
-          <h1 className="font-display text-3xl font-bold text-white leading-tight">
-            Pizzaria<br />Dom Luigi
+          <div className="text-7xl mb-4 animate-float drop-shadow-lg">🍕</div>
+          <p className="text-white/80 text-xs font-bold uppercase tracking-[0.25em] mb-1">Pizzaria</p>
+          <h1 className="font-serif italic text-4xl font-bold text-white leading-none">
+            Dom Luigi
           </h1>
-          <p className="text-red-200 mt-2 text-sm">Feita com amor, entregue com agilidade</p>
+          <p className="text-white/85 mt-3 text-sm">Feita com amor, entregue com agilidade</p>
         </div>
         {/* Wave */}
         <svg viewBox="0 0 375 48" className="w-full fill-pizza-cream" preserveAspectRatio="none">
@@ -84,9 +86,9 @@ export default function LoginPage() {
             <button
               key={m}
               onClick={() => { setMode(m); setErrors({}) }}
-              className={`flex-1 py-2.5 rounded-xl text-sm font-semibold transition-all duration-200 ${
+              className={`flex-1 py-2.5 rounded-xl text-sm font-bold transition-all duration-200 ${
                 mode === m
-                  ? 'bg-pizza-red text-white shadow-brand'
+                  ? 'bg-brand-flame text-white shadow-brand'
                   : 'text-pizza-muted hover:text-pizza-dark'
               }`}
             >

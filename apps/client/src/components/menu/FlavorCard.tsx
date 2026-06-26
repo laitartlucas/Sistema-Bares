@@ -61,7 +61,7 @@ export function FlavorCard({ flavor, selected, disabled, onToggle, compact }: Fl
 
       {/* Checkmark overlay */}
       {selected && (
-        <div className="absolute top-2 right-2 bg-pizza-red rounded-full p-1 shadow-md animate-bounce-in">
+        <div className="absolute top-2 right-2 bg-brand-flame rounded-full p-1 shadow-brand animate-bounce-in">
           <Check size={12} className="text-white" strokeWidth={3} />
         </div>
       )}

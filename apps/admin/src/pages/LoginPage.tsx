@@ -32,14 +32,17 @@ export function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-900 flex items-center justify-center p-4">
-      <div className="w-full max-w-sm">
+    <div className="min-h-screen bg-pizza-dark flex items-center justify-center p-4 relative overflow-hidden">
+      <div className="absolute -top-24 -right-24 w-72 h-72 rounded-full bg-brand-600/20 blur-3xl" />
+      <div className="absolute -bottom-24 -left-24 w-72 h-72 rounded-full bg-brand-500/15 blur-3xl" />
+      <div className="relative w-full max-w-sm">
         <div className="text-center mb-8">
-          <div className="w-16 h-16 bg-pizza-red rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-2xl">
+          <div className="w-16 h-16 bg-brand-flame rounded-3xl flex items-center justify-center mx-auto mb-4 shadow-brand">
             <UtensilsCrossed size={28} className="text-white" />
           </div>
-          <h1 className="text-2xl font-black text-white">Painel da Pizzaria</h1>
-          <p className="text-slate-400 text-sm mt-1">Acesso exclusivo para administradores</p>
+          <p className="text-slate-400 text-xs font-bold uppercase tracking-[0.25em]">Pizzaria</p>
+          <h1 className="text-3xl font-serif italic text-white mt-0.5">Dom Luigi</h1>
+          <p className="text-slate-400 text-sm mt-2">Painel — acesso exclusivo de administradores</p>
         </div>
 
         <form onSubmit={handleSubmit} className="bg-white/5 border border-white/10 rounded-2xl p-6 space-y-4 backdrop-blur-sm">

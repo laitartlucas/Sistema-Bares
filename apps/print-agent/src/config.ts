@@ -13,4 +13,5 @@ export const config = {
   printerHost:    process.env.PRINTER_HOST ?? '192.168.1.100',
   printerPort:    parseInt(process.env.PRINTER_PORT ?? '9100'),
   pollIntervalMs: parseInt(process.env.POLL_INTERVAL_MS ?? '5000'),
+  storeName:      process.env.STORE_NAME ?? 'PIZZARIA',
 }

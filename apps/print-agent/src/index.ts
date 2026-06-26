@@ -15,14 +15,26 @@ console.log(`   Impressora: ${config.printerType}`)
 // ── Processamento de um job ───────────────────────────────────────────────────
 
 async function processJob(job: Awaited<ReturnType<typeof fetchPendingJobs>>[number]): Promise<void> {
-  const ticket = job.tipo === 'COZINHA'
-    ? buildCozinhaTicket(job.order)
-    : buildCaixaTicket(job.order)
+  // Jobs com conteúdo pré-renderizado (relatórios) são impressos direto
+  let ticket: string
+  if (job.conteudo) {
+    ticket = job.conteudo
+  } else if (job.order) {
+    ticket = job.tipo === 'COZINHA'
+      ? buildCozinhaTicket(job.order)
+      : buildCaixaTicket(job.order)
+  } else {
+    await markJobError(job.id, 'Job sem conteúdo nem pedido associado').catch(() => {})
+    console.error(`❌ Job ${job.id} ignorado: sem conteúdo nem pedido`)
+    return
+  }
+
+  const ref = job.order ? `Pedido #${job.order.numero}` : job.tipo
 
   try {
     await printText(ticket)
     await markJobDone(job.id)
-    console.log(`✅ Job ${job.id} (${job.tipo}) impresso — Pedido #${job.order.numero}`)
+    console.log(`✅ Job ${job.id} (${job.tipo}) impresso — ${ref}`)
   } catch (err) {
     const msg = err instanceof Error ? err.message : String(err)
     await markJobError(job.id, msg).catch(() => {})

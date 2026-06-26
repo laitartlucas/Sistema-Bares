@@ -44,15 +44,15 @@ export function OrderTimeline({ status, tipo }: OrderTimelineProps) {
               <div
                 className={cn(
                   'w-9 h-9 rounded-full flex items-center justify-center transition-all duration-500',
-                  isDone    && 'bg-pizza-red text-white',
-                  isCurrent && 'bg-pizza-red text-white ring-4 ring-pizza-red/20',
-                  !isDone && !isCurrent && 'bg-gray-100 text-gray-400',
+                  isDone    && 'bg-brand-flame text-white shadow-brand',
+                  isCurrent && 'bg-brand-flame text-white ring-4 ring-pizza-red/20 shadow-brand',
+                  !isDone && !isCurrent && 'bg-brand-50 text-pizza-muted',
                 )}
               >
                 {isDone ? <Check size={16} strokeWidth={3} /> : STEP_ICONS[step]}
               </div>
               {!isLast && (
-                <div className={cn('w-0.5 h-8 mt-1 transition-colors duration-500', idx < currentIdx ? 'bg-pizza-red' : 'bg-gray-200')} />
+                <div className={cn('w-0.5 h-8 mt-1 transition-colors duration-500', idx < currentIdx ? 'bg-pizza-red' : 'bg-brand-100')} />
               )}
             </div>
 

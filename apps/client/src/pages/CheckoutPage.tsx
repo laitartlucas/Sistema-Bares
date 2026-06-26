@@ -111,33 +111,33 @@ export default function CheckoutPage() {
   return (
     <Layout hideNav>
       {/* Header */}
-      <div className="sticky top-0 z-20 bg-white/95 backdrop-blur-md border-b border-gray-100 pt-safe">
+      <div className="sticky top-0 z-20 glass border-b border-brand-100/70 pt-safe">
         <div className="flex items-center gap-3 px-4 py-3">
-          <button onClick={() => navigate(-1)} className="w-9 h-9 rounded-xl bg-brand-50 flex items-center justify-center text-pizza-red press-effect">
+          <button onClick={() => navigate(-1)} className="w-9 h-9 rounded-2xl bg-white shadow-card flex items-center justify-center text-pizza-red press-effect">
             <ArrowLeft size={18} />
           </button>
-          <h1 className="font-display font-bold text-pizza-dark text-lg">Checkout</h1>
+          <h1 className="font-display font-extrabold text-pizza-dark text-xl">Finalizar pedido</h1>
         </div>
       </div>
 
       <div className="px-4 py-5 flex flex-col gap-5 pb-40">
         {/* Entrega / Retirada */}
         <section>
-          <h2 className="font-semibold text-pizza-dark mb-3">Como quer receber?</h2>
+          <h2 className="font-display font-extrabold text-pizza-dark mb-3">Como quer receber?</h2>
           <div className="grid grid-cols-2 gap-2">
             {(['ENTREGA', 'RETIRADA'] as DeliveryType[]).map((type) => (
               <button
                 key={type}
                 onClick={() => setDeliveryType(type)}
                 className={cn(
-                  'flex flex-col items-center gap-2 py-4 rounded-2xl border-2 transition-all duration-200 press-effect',
+                  'flex flex-col items-center gap-2 py-5 rounded-3xl border-2 transition-all duration-200 press-effect',
                   deliveryType === type
-                    ? 'border-pizza-red bg-pizza-red/5 text-pizza-red'
-                    : 'border-gray-200 bg-white text-pizza-muted',
+                    ? 'border-transparent bg-brand-flame text-white shadow-brand'
+                    : 'border-brand-100 bg-white text-pizza-muted',
                 )}
               >
-                {type === 'ENTREGA' ? <Home size={22} /> : <MapPin size={22} />}
-                <span className="text-sm font-semibold">{type === 'ENTREGA' ? 'Entrega' : 'Retirada'}</span>
+                {type === 'ENTREGA' ? <Home size={24} /> : <MapPin size={24} />}
+                <span className="text-sm font-bold">{type === 'ENTREGA' ? 'Entrega' : 'Retirada'}</span>
               </button>
             ))}
           </div>
@@ -146,7 +146,7 @@ export default function CheckoutPage() {
         {/* Endereço */}
         {deliveryType === 'ENTREGA' && (
           <section>
-            <h2 className="font-semibold text-pizza-dark mb-3">Endereço de entrega</h2>
+            <h2 className="font-display font-extrabold text-pizza-dark mb-3">Endereço de entrega</h2>
             {addresses.length > 0 && (
               <div className="flex flex-col gap-2 mb-3">
                 {addresses.map((addr) => (
@@ -197,7 +197,7 @@ export default function CheckoutPage() {
 
         {/* Pagamento */}
         <section>
-          <h2 className="font-semibold text-pizza-dark mb-3">Forma de pagamento</h2>
+          <h2 className="font-display font-extrabold text-pizza-dark mb-3">Forma de pagamento</h2>
           <div className="flex flex-col gap-2">
             {PAYMENT_OPTIONS.map(({ value, label, icon }) => (
               <button
@@ -214,7 +214,7 @@ export default function CheckoutPage() {
                 <span className={cn('font-semibold text-sm flex-1 text-left', payment === value ? 'text-pizza-dark' : 'text-pizza-muted')}>
                   {label}
                 </span>
-                {payment === value && <span className="w-5 h-5 rounded-full bg-pizza-red flex items-center justify-center"><span className="w-2 h-2 rounded-full bg-white" /></span>}
+                {payment === value && <span className="w-5 h-5 rounded-full bg-brand-flame flex items-center justify-center"><span className="w-2 h-2 rounded-full bg-white" /></span>}
               </button>
             ))}
           </div>
@@ -234,8 +234,8 @@ export default function CheckoutPage() {
         </section>
 
         {/* Resumo do pedido */}
-        <section className="bg-white rounded-3xl shadow-card p-4">
-          <h2 className="font-semibold text-pizza-dark mb-3">Resumo</h2>
+        <section className="bg-white rounded-4xl shadow-card p-5">
+          <h2 className="font-display font-extrabold text-pizza-dark mb-3">Resumo</h2>
           <div className="flex flex-col gap-2">
             <div className="flex justify-between text-sm">
               <span className="text-pizza-muted">Subtotal ({items.length} {items.length === 1 ? 'item' : 'itens'})</span>
@@ -256,7 +256,7 @@ export default function CheckoutPage() {
       </div>
 
       {/* Footer */}
-      <div className="fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-md border-t border-gray-100 px-4 py-4 pb-safe z-30">
+      <div className="fixed bottom-0 left-0 right-0 glass border-t border-brand-100/70 px-4 py-4 pb-safe z-30">
         <Button fullWidth size="lg" loading={loading} onClick={handlePlaceOrder}>
           Confirmar pedido · {formatCurrency(totalFinal)}
         </Button>

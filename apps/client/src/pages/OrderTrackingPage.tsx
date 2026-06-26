@@ -95,14 +95,14 @@ export default function OrderTrackingPage() {
   return (
     <Layout hideNav>
       {/* Header */}
-      <div className="sticky top-0 z-20 bg-white/95 backdrop-blur-md border-b border-gray-100 pt-safe">
+      <div className="sticky top-0 z-20 glass border-b border-brand-100/70 pt-safe">
         <div className="flex items-center gap-3 px-4 py-3">
-          <button onClick={() => navigate('/orders')} className="w-9 h-9 rounded-xl bg-brand-50 flex items-center justify-center text-pizza-red press-effect">
+          <button onClick={() => navigate('/orders')} className="w-9 h-9 rounded-2xl bg-white shadow-card flex items-center justify-center text-pizza-red press-effect">
             <ArrowLeft size={18} />
           </button>
           <div className="flex-1">
-            <p className="text-xs text-pizza-muted">Pedido #{order.numero}</p>
-            <h1 className="font-display font-bold text-pizza-dark text-base leading-tight">Acompanhamento</h1>
+            <p className="text-xs text-pizza-muted font-medium">Pedido #{order.numero}</p>
+            <h1 className="font-display font-extrabold text-pizza-dark text-lg leading-tight">Acompanhamento</h1>
           </div>
           <OrderStatusBadge status={order.status as OrderStatus} animated />
         </div>
@@ -110,14 +110,14 @@ export default function OrderTrackingPage() {
 
       <div className="px-4 py-5 flex flex-col gap-5">
         {/* Timeline */}
-        <div className="bg-white rounded-3xl shadow-soft p-5">
-          <h2 className="font-display font-semibold text-pizza-dark mb-4">Status do pedido</h2>
+        <div className="bg-white rounded-4xl shadow-card-lg p-5">
+          <h2 className="font-display font-extrabold text-pizza-dark mb-4">Status do pedido</h2>
           <OrderTimeline status={order.status as OrderStatus} tipo={order.tipo} />
         </div>
 
         {/* Itens */}
-        <div className="bg-white rounded-3xl shadow-card p-4">
-          <h2 className="font-semibold text-pizza-dark mb-3">Itens</h2>
+        <div className="bg-white rounded-4xl shadow-card p-5">
+          <h2 className="font-display font-extrabold text-pizza-dark mb-3">Itens</h2>
           <div className="flex flex-col gap-2">
             {order.itens?.map((item) => (
               <div key={item.id} className="flex justify-between text-sm gap-2">
@@ -151,8 +151,8 @@ export default function OrderTrackingPage() {
         </div>
 
         {/* Detalhes */}
-        <div className="bg-white rounded-3xl shadow-card p-4 flex flex-col gap-2">
-          <h2 className="font-semibold text-pizza-dark mb-1">Detalhes</h2>
+        <div className="bg-white rounded-4xl shadow-card p-5 flex flex-col gap-2">
+          <h2 className="font-display font-extrabold text-pizza-dark mb-1">Detalhes</h2>
           <div className="flex justify-between text-sm">
             <span className="text-pizza-muted">Pedido em</span>
             <span className="text-pizza-dark">{formatDate(order.createdAt)}</span>

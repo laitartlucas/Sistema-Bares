@@ -72,7 +72,7 @@ export default function OrderHistoryPage() {
   return (
     <Layout>
       <div className="px-4 pt-6 pb-4">
-        <h1 className="font-display text-2xl font-bold text-pizza-dark">Meus Pedidos</h1>
+        <h1 className="font-display text-3xl font-extrabold text-pizza-dark">Meus Pedidos</h1>
         <p className="text-pizza-muted text-sm mt-0.5">Histórico e acompanhamento</p>
       </div>
 
@@ -92,13 +92,13 @@ export default function OrderHistoryPage() {
             return (
               <div
                 key={order.id}
-                className="bg-white rounded-3xl shadow-card overflow-hidden"
+                className="bg-white rounded-4xl shadow-card overflow-hidden"
               >
                 <button
                   onClick={() => navigate(`/orders/${order.id}`)}
                   className="w-full p-4 flex items-start gap-3 text-left press-effect"
                 >
-                  <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-brand-400 to-pizza-red flex items-center justify-center text-xl flex-shrink-0">
+                  <div className="w-12 h-12 rounded-2xl bg-brand-flame shadow-brand flex items-center justify-center text-xl flex-shrink-0">
                     🍕
                   </div>
                   <div className="flex-1 min-w-0">

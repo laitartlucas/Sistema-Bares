@@ -87,7 +87,10 @@ export function KDSPage() {
     <div className="flex flex-col h-full">
       {/* Toolbar */}
       <header className="flex items-center justify-between px-6 py-4 bg-white border-b border-slate-200 shrink-0">
-        <h1 className="text-xl font-black text-slate-800">Pedidos ao Vivo</h1>
+        <div className="flex items-center gap-2.5">
+          <span className="w-2.5 h-2.5 rounded-full bg-pizza-red animate-pulse shadow-brand" />
+          <h1 className="text-xl font-display font-extrabold text-slate-800">Pedidos ao Vivo</h1>
+        </div>
         <div className="flex items-center gap-2">
           {!soundEnabled ? (
             <Button variant="secondary" size="sm" leftIcon={<VolumeX size={14} />} onClick={enableSound}>

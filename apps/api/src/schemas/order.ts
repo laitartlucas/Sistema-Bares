@@ -81,6 +81,16 @@ export const listOrdersQuerySchema = z.object({
   limit: z.coerce.number().int().min(1).max(100).default(20),
 })
 
+export const reportFiltersSchema = z.object({
+  from: z.string().optional(),
+  to: z.string().optional(),
+  status: z.string().optional(),
+  formaPagamento: z.string().optional(),
+  saborId: z.string().optional(),
+  categoria: z.enum(['SALGADA', 'DOCE']).optional(),
+})
+
+export type ReportFiltersInput = z.infer<typeof reportFiltersSchema>
 export type CreateOrderInput = z.infer<typeof createOrderSchema>
 export type UpdateOrderStatusInput = z.infer<typeof updateOrderStatusSchema>
 export type ListOrdersQuery = z.infer<typeof listOrdersQuerySchema>

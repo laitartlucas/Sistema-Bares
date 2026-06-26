@@ -12,7 +12,7 @@ export type OrderStatus =
   | 'CANCELADO'
 export type ItemType = 'PIZZA' | 'BEBIDA'
 export type FlavorCategory = 'SALGADA' | 'DOCE'
-export type PrintJobType = 'COZINHA' | 'CAIXA'
+export type PrintJobType = 'COZINHA' | 'CAIXA' | 'RELATORIO'
 export type PrintJobStatus = 'PENDENTE' | 'IMPRESSO' | 'ERRO'
 export type PriceCalcMethod = 'MAIOR_PRECO' | 'MEDIA_PRECO'
 
@@ -125,11 +125,13 @@ export interface Order {
 
 export interface PrintJob {
   id: string
-  orderId: string
+  orderId?: string
   tipo: PrintJobType
   status: PrintJobStatus
   tentativas: number
   erro?: string
+  /** Conteúdo pré-renderizado (relatórios e impressões avulsas). */
+  conteudo?: string
   createdAt: string
   updatedAt: string
 }
@@ -206,7 +208,7 @@ export interface WsStatusUpdatePayload {
 export type ServerToClientEvents = {
   'novo-pedido': (payload: WsNewOrderPayload) => void
   'status-atualizado': (payload: WsStatusUpdatePayload) => void
-  'print-job': (payload: { jobId: string; orderId: string; tipo: PrintJobType }) => void
+  'print-job': (payload: { jobId: string; orderId?: string; tipo: PrintJobType }) => void
 }
 
 export type ClientToServerEvents = {
@@ -245,6 +247,55 @@ export const PAYMENT_METHOD_LABELS: Record<PaymentMethod, string> = {
   DINHEIRO: 'Dinheiro',
   PIX: 'PIX',
   CARTAO: 'Cartão na Entrega',
+}
+
+// ── Relatórios ────────────────────────────────────────────────────────────────
+
+/** Filtros aceitos pelo relatório de vendas (todos opcionais). */
+export interface ReportFilters {
+  /** Data inicial (YYYY-MM-DD). Default: hoje. */
+  from?: string
+  /** Data final (YYYY-MM-DD). Default: igual a `from`. */
+  to?: string
+  /** Lista de status separada por vírgula (ex.: "ENTREGUE,RECEBIDO"). */
+  status?: string
+  /** Formas de pagamento separadas por vírgula (ex.: "PIX,DINHEIRO"). */
+  formaPagamento?: string
+  /** Filtra os itens por sabor específico. */
+  saborId?: string
+  /** Filtra os sabores por categoria. */
+  categoria?: FlavorCategory
+}
+
+export interface ReportPaymentBreakdown {
+  forma: PaymentMethod
+  count: number
+  total: number
+}
+
+export interface ReportStatusBreakdown {
+  status: OrderStatus
+  count: number
+  total: number
+}
+
+export interface ReportTopItem {
+  nome: string
+  count: number
+  total: number
+}
+
+export interface SalesReport {
+  from: string
+  to: string
+  totalPedidos: number
+  faturamento: number
+  ticketMedio: number
+  cancelados: { count: number; total: number }
+  porPagamento: ReportPaymentBreakdown[]
+  porStatus: ReportStatusBreakdown[]
+  topSabores: ReportTopItem[]
+  topProdutos: ReportTopItem[]
 }
 
 export const ORDER_STATUS_FLOW: OrderStatus[] = [

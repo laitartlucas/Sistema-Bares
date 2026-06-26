@@ -84,25 +84,26 @@ export default function ProfilePage() {
   return (
     <Layout>
       <div className="px-4 pt-6 pb-4">
-        <h1 className="font-display text-2xl font-bold text-pizza-dark">Meu Perfil</h1>
+        <h1 className="font-display text-3xl font-extrabold text-pizza-dark">Meu Perfil</h1>
       </div>
 
       <div className="px-4 flex flex-col gap-5 pb-6">
         {/* User card */}
-        <div className="bg-white rounded-3xl shadow-soft p-5 flex items-center gap-4">
-          <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-brand-400 to-pizza-red flex items-center justify-center text-2xl text-white font-display font-bold shrink-0">
+        <div className="relative bg-brand-flame rounded-4xl shadow-brand-lg p-5 flex items-center gap-4 overflow-hidden">
+          <div className="absolute inset-0 bg-hero-pattern opacity-50" />
+          <div className="relative w-16 h-16 rounded-2xl bg-white/20 backdrop-blur-sm flex items-center justify-center text-2xl text-white font-display font-extrabold shrink-0">
             {user?.nome.charAt(0).toUpperCase()}
           </div>
-          <div className="flex-1 min-w-0">
-            <h2 className="font-display font-bold text-pizza-dark text-lg leading-tight">{user?.nome}</h2>
+          <div className="relative flex-1 min-w-0">
+            <h2 className="font-display font-extrabold text-white text-xl leading-tight truncate">{user?.nome}</h2>
             <div className="flex items-center gap-2 mt-0.5">
-              <p className="text-pizza-muted text-sm flex items-center gap-1">
+              <p className="text-white/85 text-sm flex items-center gap-1">
                 <Phone size={13} />
                 {user?.telefone ? formatPhone(user.telefone) : '—'}
               </p>
               <button
                 onClick={() => { setNewPhone(user?.telefone ?? ''); setShowEditPhone(true) }}
-                className="text-pizza-red p-0.5 press-effect"
+                className="text-white/90 bg-white/20 rounded-lg p-1 press-effect"
                 title="Editar telefone"
               >
                 <Pencil size={12} />
@@ -114,7 +115,7 @@ export default function ProfilePage() {
         {/* Endereços */}
         <section>
           <div className="flex items-center justify-between mb-3">
-            <h2 className="font-semibold text-pizza-dark">Meus endereços</h2>
+            <h2 className="font-display font-extrabold text-pizza-dark text-lg">Meus endereços</h2>
             <button
               onClick={() => setShowAddAddr(true)}
               className="flex items-center gap-1 text-pizza-red text-sm font-semibold press-effect"
@@ -156,7 +157,7 @@ export default function ProfilePage() {
         </section>
 
         {/* Ações */}
-        <section className="bg-white rounded-3xl shadow-card overflow-hidden">
+        <section className="bg-white rounded-4xl shadow-card overflow-hidden">
           <button
             onClick={() => navigate('/orders')}
             className="w-full flex items-center gap-3 p-4 hover:bg-brand-50 transition-colors border-b border-gray-100 press-effect"

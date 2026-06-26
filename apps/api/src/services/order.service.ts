@@ -6,7 +6,9 @@ import { serialize } from '../lib/serialize'
 import { getIO } from '../lib/socket'
 import { AppError } from '../middleware/errorHandler'
 import { sendOrderConfirmation, sendSaiuParaEntrega, sendProntoParaRetirada } from './whatsapp.service'
+import { buildReportTicket } from './report.formatter'
 import type { CreateOrderInput, ListOrdersQuery, ManualOrderInput, UpdateOrderStatusInput } from '../schemas/order'
+import type { OrderStatus, PaymentMethod, ReportFilters, SalesReport } from '@pizzaria/shared'
 
 // ── Include padrão para pedidos ───────────────────────────────────────────────
 
@@ -342,50 +344,154 @@ export async function adminReprintOrder(orderId: string) {
   return { queued: jobs.length }
 }
 
-// ── Admin — relatório do dia ──────────────────────────────────────────────────
+// ── Admin — relatório de vendas (com filtros) ─────────────────────────────────
 
-export async function adminDailyReport(date?: string) {
-  const day = date ? new Date(date) : new Date()
-  const start = new Date(day.getFullYear(), day.getMonth(), day.getDate(), 0, 0, 0, 0)
-  const end = new Date(day.getFullYear(), day.getMonth(), day.getDate(), 23, 59, 59, 999)
+/** Constrói uma data local a partir de "YYYY-MM-DD" (evita problemas de fuso). */
+function parseDay(s?: string): Date {
+  if (!s) return new Date()
+  const [y, m, d] = s.split('-').map(Number)
+  return new Date(y, (m ?? 1) - 1, d ?? 1)
+}
 
-  const [orders, totalResult] = await Promise.all([
+function toISODay(d: Date): string {
+  const y = d.getFullYear()
+  const m = String(d.getMonth() + 1).padStart(2, '0')
+  const day = String(d.getDate()).padStart(2, '0')
+  return `${y}-${m}-${day}`
+}
+
+export async function adminSalesReport(filters: ReportFilters): Promise<SalesReport> {
+  const fromDay = parseDay(filters.from)
+  const toDay = filters.to ? parseDay(filters.to) : fromDay
+  const start = new Date(fromDay.getFullYear(), fromDay.getMonth(), fromDay.getDate(), 0, 0, 0, 0)
+  const end = new Date(toDay.getFullYear(), toDay.getMonth(), toDay.getDate(), 23, 59, 59, 999)
+
+  const statusList = filters.status?.split(',').map((s) => s.trim()).filter(Boolean) as
+    | OrderStatus[]
+    | undefined
+  const pagamentoList = filters.formaPagamento?.split(',').map((s) => s.trim()).filter(Boolean) as
+    | PaymentMethod[]
+    | undefined
+
+  // Filtros que valem para todas as consultas do período
+  const baseWhere: Prisma.OrderWhereInput = {
+    createdAt: { gte: start, lte: end },
+    ...(pagamentoList?.length ? { formaPagamento: { in: pagamentoList } } : {}),
+  }
+
+  // Se o usuário não escolheu status, excluímos cancelados do faturamento
+  const statusWhere: Prisma.OrderWhereInput = statusList?.length
+    ? { status: { in: statusList } }
+    : { status: { not: 'CANCELADO' } }
+
+  const [orders, canceladosAgg] = await Promise.all([
     prisma.order.findMany({
-      where: {
-        createdAt: { gte: start, lte: end },
-        status: { not: 'CANCELADO' },
-      },
+      where: { ...baseWhere, ...statusWhere },
       include: {
         itens: { include: { sabores: { include: { flavor: true } }, bebida: true, tamanho: true } },
       },
     }),
     prisma.order.aggregate({
-      where: { createdAt: { gte: start, lte: end }, status: { not: 'CANCELADO' } },
+      where: { ...baseWhere, status: 'CANCELADO' },
       _sum: { total: true },
       _count: true,
     }),
   ])
 
-  // Top sabores
-  const flavorCount: Record<string, { nome: string; count: number }> = {}
+  const faturamento = orders.reduce((acc, o) => acc + Number(o.total), 0)
+  const totalPedidos = orders.length
+  const ticketMedio = totalPedidos > 0 ? faturamento / totalPedidos : 0
+
+  // Breakdown por forma de pagamento
+  const payMap = new Map<PaymentMethod, { count: number; total: number }>()
+  // Breakdown por status
+  const statusMap = new Map<OrderStatus, { count: number; total: number }>()
+  for (const o of orders) {
+    const pk = o.formaPagamento as PaymentMethod
+    const pe = payMap.get(pk) ?? { count: 0, total: 0 }
+    pe.count++; pe.total += Number(o.total); payMap.set(pk, pe)
+
+    const sk = o.status as OrderStatus
+    const se = statusMap.get(sk) ?? { count: 0, total: 0 }
+    se.count++; se.total += Number(o.total); statusMap.set(sk, se)
+  }
+
+  // Estatísticas por item (respeitando filtros de sabor/categoria)
+  const flavorCount: Record<string, { nome: string; count: number; total: number }> = {}
+  const prodCount: Record<string, { nome: string; count: number; total: number }> = {}
   for (const order of orders) {
     for (const item of order.itens) {
-      if (item.tipo !== 'PIZZA') continue
-      for (const sf of item.sabores) {
-        const id = sf.flavor.id
-        if (!flavorCount[id]) flavorCount[id] = { nome: sf.flavor.nome, count: 0 }
-        flavorCount[id].count += item.quantidade
+      const itemTotal = Number(item.precoUnitario) * item.quantidade
+
+      if (item.tipo === 'PIZZA') {
+        const prodKey = `pizza:${item.tamanho?.id ?? '—'}`
+        const prodNome = `Pizza ${item.tamanho?.nome ?? ''}`.trim()
+        if (!prodCount[prodKey]) prodCount[prodKey] = { nome: prodNome, count: 0, total: 0 }
+        prodCount[prodKey].count += item.quantidade
+        prodCount[prodKey].total += itemTotal
+
+        for (const sf of item.sabores) {
+          if (filters.saborId && sf.flavor.id !== filters.saborId) continue
+          if (filters.categoria && sf.flavor.categoria !== filters.categoria) continue
+          const id = sf.flavor.id
+          if (!flavorCount[id]) flavorCount[id] = { nome: sf.flavor.nome, count: 0, total: 0 }
+          flavorCount[id].count += item.quantidade
+          flavorCount[id].total += itemTotal / Math.max(1, item.sabores.length)
+        }
+      } else if (item.bebida) {
+        if (filters.saborId || filters.categoria) continue // bebida não tem sabor/categoria
+        const prodKey = `bebida:${item.bebida.id}`
+        if (!prodCount[prodKey]) prodCount[prodKey] = { nome: item.bebida.nome, count: 0, total: 0 }
+        prodCount[prodKey].count += item.quantidade
+        prodCount[prodKey].total += itemTotal
       }
     }
   }
+
   const topSabores = Object.values(flavorCount)
     .sort((a, b) => b.count - a.count)
-    .slice(0, 5)
+    .slice(0, 8)
+  const topProdutos = Object.values(prodCount)
+    .sort((a, b) => b.count - a.count)
+    .slice(0, 8)
 
   return {
-    date: start.toISOString().split('T')[0],
-    totalPedidos: totalResult._count,
-    faturamento: Number(totalResult._sum.total ?? 0),
+    from: toISODay(start),
+    to: toISODay(end),
+    totalPedidos,
+    faturamento,
+    ticketMedio,
+    cancelados: {
+      count: canceladosAgg._count,
+      total: Number(canceladosAgg._sum.total ?? 0),
+    },
+    porPagamento: [...payMap.entries()]
+      .map(([forma, v]) => ({ forma, ...v }))
+      .sort((a, b) => b.total - a.total),
+    porStatus: [...statusMap.entries()]
+      .map(([status, v]) => ({ status, ...v }))
+      .sort((a, b) => b.count - a.count),
     topSabores,
+    topProdutos,
   }
+}
+
+// ── Admin — imprimir relatório na fila da impressora ──────────────────────────
+
+export async function adminPrintReport(filters: ReportFilters) {
+  const report = await adminSalesReport(filters)
+  const conteudo = buildReportTicket(report)
+
+  const job = await prisma.printJob.create({
+    data: { tipo: 'RELATORIO', status: 'PENDENTE', conteudo },
+  })
+
+  try {
+    const io = getIO()
+    io.to('admin').emit('print-job', { jobId: job.id, tipo: 'RELATORIO' })
+  } catch {
+    // sem WS — o agente pega via polling
+  }
+
+  return { queued: 1, jobId: job.id }
 }
