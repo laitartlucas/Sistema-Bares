@@ -455,6 +455,24 @@ export async function adminSalesReport(filters: ReportFilters): Promise<SalesRep
     .sort((a, b) => b.count - a.count)
     .slice(0, 8)
 
+  // Breakdown diário — inicializa todos os dias do intervalo com zero
+  const dayMap = new Map<string, { pedidos: number; faturamento: number }>()
+  const curDay = new Date(fromDay)
+  while (curDay <= toDay) {
+    dayMap.set(toISODay(curDay), { pedidos: 0, faturamento: 0 })
+    curDay.setDate(curDay.getDate() + 1)
+  }
+  for (const o of orders) {
+    const key = toISODay(o.createdAt)
+    const entry = dayMap.get(key) ?? { pedidos: 0, faturamento: 0 }
+    entry.pedidos++
+    entry.faturamento += Number(o.total)
+    dayMap.set(key, entry)
+  }
+  const dailyBreakdown = [...dayMap.entries()]
+    .sort(([a], [b]) => a.localeCompare(b))
+    .map(([date, v]) => ({ date, ...v }))
+
   return {
     from: toISODay(start),
     to: toISODay(end),
@@ -473,6 +491,7 @@ export async function adminSalesReport(filters: ReportFilters): Promise<SalesRep
       .sort((a, b) => b.count - a.count),
     topSabores,
     topProdutos,
+    dailyBreakdown,
   }
 }
 
