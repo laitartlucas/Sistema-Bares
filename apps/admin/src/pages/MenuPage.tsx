@@ -9,6 +9,7 @@ import { Input, Select } from '../components/ui/Input'
 import { Badge } from '../components/ui/Badge'
 import { Modal } from '../components/ui/Modal'
 import { Spinner } from '../components/ui/Spinner'
+import { ImageUploadField } from '../components/ui/ImageUploadField'
 
 type Tab = 'sabores' | 'bordas' | 'tamanhos' | 'bebidas'
 
@@ -133,7 +134,7 @@ export function MenuPage() {
     if (tab === 'sabores') return (
       <div className="space-y-2">
         {flavors.map((f) => (
-          <ItemRow key={f.id} name={`${f.nome} (${f.categoria})`} active={f.ativo}
+          <ItemRow key={f.id} name={`${f.nome} (${f.categoria})`} active={f.ativo} imagemUrl={f.imagemUrl ?? ''}
             onEdit={() => openEdit('sabores', f as unknown as Record<string, unknown>)}
             onToggle={() => handleToggle('sabores', f.id)}
             onDelete={() => handleDelete('sabores', f.id)} />
@@ -179,6 +180,7 @@ export function MenuPage() {
         <Input label="Descrição" value={form.descricao ?? ''} onChange={(e) => setForm((p) => ({ ...p, descricao: e.target.value }))} />
         <Select label="Categoria" value={form.categoria ?? 'SALGADA'} onChange={(e) => setForm((p) => ({ ...p, categoria: e.target.value }))}
           options={FLAVOR_CATS.map((c) => ({ value: c, label: c }))} />
+        <ImageUploadField value={form.imagemUrl} onChange={(url) => setForm((p) => ({ ...p, imagemUrl: url }))} />
       </div>
     )
     if (tab === 'bordas') return (
@@ -198,12 +200,7 @@ export function MenuPage() {
         <Input label="Nome" value={form.nome ?? ''} onChange={(e) => setForm((p) => ({ ...p, nome: e.target.value }))} required />
         <Input label="Volume (ex: 350ml)" value={form.volume ?? ''} onChange={(e) => setForm((p) => ({ ...p, volume: e.target.value }))} />
         <Input label="Preço (R$)" type="number" step="0.01" value={form.preco ?? ''} onChange={(e) => setForm((p) => ({ ...p, preco: e.target.value }))} />
-        <Input label="Foto (URL da imagem)" placeholder="https://..." value={form.imagemUrl ?? ''} onChange={(e) => setForm((p) => ({ ...p, imagemUrl: e.target.value }))} />
-        {form.imagemUrl && (
-          <div className="w-20 h-20 rounded-lg overflow-hidden border border-slate-200">
-            <img src={form.imagemUrl} alt="Pré-visualização" className="w-full h-full object-cover" />
-          </div>
-        )}
+        <ImageUploadField value={form.imagemUrl} onChange={(url) => setForm((p) => ({ ...p, imagemUrl: url }))} />
       </div>
     )
   }

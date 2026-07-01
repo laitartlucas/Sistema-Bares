@@ -1,5 +1,7 @@
-import { Router, Request, Response, NextFunction } from 'express'
+import { Router } from 'express'
+import multer from 'multer'
 import { validate } from '../../middleware/validate'
+import { uploadImage } from '../../middleware/upload'
 import {
   createSizeSchema, updateSizeSchema,
   createCrustSchema, updateCrustSchema,
@@ -9,6 +11,26 @@ import {
 import * as menuService from '../../services/menu.service'
 
 const router = Router()
+
+// ── Upload de imagem ──────────────────────────────────────────────────────────
+
+router.post('/upload', (req, res) => {
+  uploadImage.single('file')(req, res, (err: unknown) => {
+    if (err) {
+      const message = err instanceof multer.MulterError && err.code === 'LIMIT_FILE_SIZE'
+        ? 'Imagem muito grande (máx. 5MB)'
+        : (err as Error).message || 'Erro ao enviar arquivo'
+      res.status(400).json({ success: false, error: message })
+      return
+    }
+    if (!req.file) {
+      res.status(400).json({ success: false, error: 'Nenhum arquivo enviado' })
+      return
+    }
+    const baseUrl = process.env.API_PUBLIC_URL ?? `${req.protocol}://${req.get('host')}`
+    res.status(201).json({ success: true, data: { url: `${baseUrl}/uploads/${req.file.filename}` } })
+  })
+})
 
 // ── Tamanhos ──────────────────────────────────────────────────────────────────
 
