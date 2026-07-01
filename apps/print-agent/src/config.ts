@@ -9,9 +9,13 @@ function required(key: string): string {
 export const config = {
   apiUrl:         process.env.API_URL ?? 'http://localhost:3001',
   printSecret:    required('PRINT_SECRET'),
-  printerType:    (process.env.PRINTER_TYPE ?? 'usb') as 'usb' | 'network' | 'serial',
-  printerHost:    process.env.PRINTER_HOST ?? '192.168.1.100',
-  printerPort:    parseInt(process.env.PRINTER_PORT ?? '9100'),
+  // Nome do compartilhamento (Windows) de cada impressora local.
+  // Ex: painel de controle > impressoras > propriedades > compartilhamento > "COZINHA"
+  printerShares: {
+    COZINHA:   required('PRINTER_COZINHA'),
+    CAIXA:     required('PRINTER_CAIXA'),
+    RELATORIO: process.env.PRINTER_RELATORIO ?? process.env.PRINTER_CAIXA ?? required('PRINTER_CAIXA'),
+  },
   pollIntervalMs: parseInt(process.env.POLL_INTERVAL_MS ?? '5000'),
   storeName:      process.env.STORE_NAME ?? 'PIZZARIA',
 }
