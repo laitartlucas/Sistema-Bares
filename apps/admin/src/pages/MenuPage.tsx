@@ -21,12 +21,17 @@ const TABS: { key: Tab; label: string }[] = [
 
 const FLAVOR_CATS = ['SALGADA', 'DOCE']
 
-function ItemRow({ name, price, active, onEdit, onToggle, onDelete }: {
-  name: string; price?: number; active: boolean
+function ItemRow({ name, price, active, imagemUrl, onEdit, onToggle, onDelete }: {
+  name: string; price?: number; active: boolean; imagemUrl?: string
   onEdit: () => void; onToggle: () => void; onDelete: () => void
 }) {
   return (
     <div className="flex items-center gap-3 bg-white border border-slate-200 rounded-xl px-4 py-3 hover:border-slate-300 transition-colors">
+      {imagemUrl !== undefined && (
+        <div className="w-10 h-10 rounded-lg bg-slate-100 flex-shrink-0 overflow-hidden flex items-center justify-center text-lg">
+          {imagemUrl ? <img src={imagemUrl} alt={name} className="w-full h-full object-cover" /> : '🥤'}
+        </div>
+      )}
       <div className="flex-1 min-w-0">
         <p className="font-semibold text-sm text-slate-800 truncate">{name}</p>
         {price !== undefined && <p className="text-xs text-slate-400">{formatCurrency(price)}</p>}
@@ -158,7 +163,7 @@ export function MenuPage() {
     if (tab === 'bebidas') return (
       <div className="space-y-2">
         {beverages.map((b) => (
-          <ItemRow key={b.id} name={`${b.nome} (${b.volume})`} price={b.preco} active={b.ativo}
+          <ItemRow key={b.id} name={`${b.nome} (${b.volume})`} price={b.preco} active={b.ativo} imagemUrl={b.imagemUrl ?? ''}
             onEdit={() => openEdit('bebidas', b as unknown as Record<string, unknown>)}
             onToggle={() => handleToggle('bebidas', b.id)}
             onDelete={() => handleDelete('bebidas', b.id)} />
@@ -193,6 +198,12 @@ export function MenuPage() {
         <Input label="Nome" value={form.nome ?? ''} onChange={(e) => setForm((p) => ({ ...p, nome: e.target.value }))} required />
         <Input label="Volume (ex: 350ml)" value={form.volume ?? ''} onChange={(e) => setForm((p) => ({ ...p, volume: e.target.value }))} />
         <Input label="Preço (R$)" type="number" step="0.01" value={form.preco ?? ''} onChange={(e) => setForm((p) => ({ ...p, preco: e.target.value }))} />
+        <Input label="Foto (URL da imagem)" placeholder="https://..." value={form.imagemUrl ?? ''} onChange={(e) => setForm((p) => ({ ...p, imagemUrl: e.target.value }))} />
+        {form.imagemUrl && (
+          <div className="w-20 h-20 rounded-lg overflow-hidden border border-slate-200">
+            <img src={form.imagemUrl} alt="Pré-visualização" className="w-full h-full object-cover" />
+          </div>
+        )}
       </div>
     )
   }
