@@ -236,7 +236,42 @@ export default function CheckoutPage() {
         {/* Resumo do pedido */}
         <section className="bg-white rounded-4xl shadow-card p-5">
           <h2 className="font-display font-extrabold text-pizza-dark mb-3">Resumo</h2>
-          <div className="flex flex-col gap-2">
+
+          {/* Itens escolhidos */}
+          <div className="flex flex-col gap-3 mb-4">
+            {items.map((item) => {
+              const nome = item.tipo === 'PIZZA'
+                ? item.sabores.map((s) => s.nome).join(' + ')
+                : `${item.bebida.nome}${item.bebida.volume ? ` ${item.bebida.volume}` : ''}`
+              const subtitulo = item.tipo === 'PIZZA'
+                ? `${item.tamanho.nome} · ${item.borda.nome}`
+                : 'Bebida'
+              return (
+                <div key={item.id} className="flex gap-3">
+                  <div className={cn(
+                    'w-10 h-10 rounded-2xl flex items-center justify-center text-lg flex-shrink-0',
+                    item.tipo === 'PIZZA' ? 'bg-brand-flame shadow-brand' : 'bg-gradient-to-br from-sky-50 to-cyan-100',
+                  )}>
+                    {item.tipo === 'PIZZA' ? '🍕' : '🥤'}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="font-semibold text-pizza-dark text-sm leading-tight">
+                      <span className="text-pizza-red">{item.quantidade}×</span> {nome}
+                    </p>
+                    <p className="text-xs text-pizza-muted mt-0.5">{subtitulo}</p>
+                    {item.tipo === 'PIZZA' && item.observacoes && (
+                      <p className="text-xs text-pizza-muted mt-0.5 italic">"{item.observacoes}"</p>
+                    )}
+                  </div>
+                  <span className="text-sm font-bold text-pizza-dark flex-shrink-0">
+                    {formatCurrency(item.precoUnitario * item.quantidade)}
+                  </span>
+                </div>
+              )
+            })}
+          </div>
+
+          <div className="flex flex-col gap-2 border-t border-dashed border-gray-200 pt-3">
             <div className="flex justify-between text-sm">
               <span className="text-pizza-muted">Subtotal ({items.length} {items.length === 1 ? 'item' : 'itens'})</span>
               <span className="font-medium text-pizza-dark">{formatCurrency(total)}</span>

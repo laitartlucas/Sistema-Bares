@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
-import { ArrowLeft, Phone } from 'lucide-react'
+import { ArrowLeft, Phone, XCircle } from 'lucide-react'
 import type { Order, OrderStatus } from '@pizzaria/shared'
 import { ORDER_STATUS_LABELS, PAYMENT_METHOD_LABELS } from '@pizzaria/shared'
 import { ordersApi } from '../api/orders'
+import { ApiError } from '../api/client'
 import { useSocket } from '../contexts/SocketContext'
 import { useToast } from '../hooks/useToast'
 import { Layout } from '../components/layout/Layout'
@@ -32,6 +33,24 @@ export default function OrderTrackingPage() {
 
   const [order, setOrder] = useState<Order | null>(null)
   const [loading, setLoading] = useState(true)
+  const [cancelling, setCancelling] = useState(false)
+
+  async function handleCancel() {
+    if (!order || !id) return
+    if (!window.confirm('Tem certeza que deseja cancelar este pedido? Essa ação não pode ser desfeita.')) return
+
+    setCancelling(true)
+    try {
+      const updated = await ordersApi.cancel(id)
+      setOrder(updated)
+      toast('Pedido cancelado', 'success')
+    } catch (err) {
+      const msg = err instanceof ApiError ? err.message : 'Erro ao cancelar pedido'
+      toast(msg, 'error')
+    } finally {
+      setCancelling(false)
+    }
+  }
 
   useEffect(() => {
     if (!id) return
@@ -176,6 +195,18 @@ export default function OrderTrackingPage() {
             </div>
           )}
         </div>
+
+        {/* Cancelar pedido — só enquanto ainda foi apenas recebido */}
+        {order.status === 'RECEBIDO' && (
+          <button
+            onClick={handleCancel}
+            disabled={cancelling}
+            className="w-full border-2 border-red-200 text-red-500 rounded-2xl py-3.5 font-semibold text-sm flex items-center justify-center gap-2 press-effect transition-colors hover:bg-red-50 disabled:opacity-50"
+          >
+            <XCircle size={18} />
+            {cancelling ? 'Cancelando...' : 'Cancelar pedido'}
+          </button>
+        )}
       </div>
     </Layout>
   )

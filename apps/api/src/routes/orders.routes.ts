@@ -41,4 +41,13 @@ router.get('/:id', async (req: Request, res: Response, next: NextFunction) => {
   }
 })
 
+router.patch('/:id/cancel', async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const order = await orderService.cancelMyOrder(req.user!.sub, req.params.id)
+    res.json({ success: true, data: order })
+  } catch (err) {
+    next(err)
+  }
+})
+
 export default router

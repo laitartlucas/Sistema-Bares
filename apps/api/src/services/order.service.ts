@@ -225,6 +225,43 @@ export async function getMyOrder(userId: string, orderId: string) {
   return serialize(order)
 }
 
+// ── Cliente — cancelar o próprio pedido ───────────────────────────────────────
+
+/** Status em que o cliente ainda pode cancelar sozinho (antes da cozinha iniciar). */
+const CLIENT_CANCELABLE: OrderStatus[] = ['RECEBIDO']
+
+export async function cancelMyOrder(userId: string, orderId: string) {
+  const order = await prisma.order.findUnique({ where: { id: orderId } })
+  if (!order || order.userId !== userId) throw new AppError(404, 'Pedido não encontrado')
+
+  if (order.status === 'CANCELADO') throw new AppError(400, 'Este pedido já foi cancelado')
+  if (!CLIENT_CANCELABLE.includes(order.status as OrderStatus))
+    throw new AppError(400, 'Este pedido não pode mais ser cancelado. Fale com o estabelecimento.')
+
+  const updated = await prisma.order.update({
+    where: { id: orderId },
+    data: { status: 'CANCELADO' },
+    include: ORDER_INCLUDE,
+  })
+
+  // Notifica o próprio cliente e o painel admin via WebSocket
+  try {
+    const io = getIO()
+    const payload = {
+      orderId: updated.id,
+      orderNumero: updated.numero,
+      status: updated.status,
+      userId: updated.userId,
+    }
+    io.to(`order:${orderId}`).emit('status-atualizado', payload)
+    io.to('admin').emit('status-atualizado', payload)
+  } catch {
+    // sem WS disponível
+  }
+
+  return serialize(updated)
+}
+
 // ── Admin — listar pedidos ────────────────────────────────────────────────────
 
 export async function adminListOrders(query: ListOrdersQuery) {
