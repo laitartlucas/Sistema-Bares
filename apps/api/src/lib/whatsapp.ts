@@ -1,3 +1,4 @@
+import fs from 'fs'
 import path from 'path'
 import QRCode from 'qrcode'
 import { Client, LocalAuth } from 'whatsapp-web.js'
@@ -16,6 +17,16 @@ export async function initWhatsApp(): Promise<void> {
 
   try {
     const authDir = path.join(process.cwd(), '.whatsapp-session')
+
+    // Remove locks órfãos do Chromium deixados por um container/processo anterior.
+    // O volume persiste entre deploys; se o Chromium anterior não encerrou limpo,
+    // sobra o SingletonLock apontando pro hostname/PID antigo e o Chromium recusa
+    // abrir o profile ("profile appears to be in use by another Chromium process").
+    // O LocalAuth (sem clientId) usa <authDir>/session como userDataDir.
+    const sessionDir = path.join(authDir, 'session')
+    for (const lock of ['SingletonLock', 'SingletonCookie', 'SingletonSocket']) {
+      try { fs.rmSync(path.join(sessionDir, lock), { force: true }) } catch { /* ignora */ }
+    }
 
     const puppeteer: any = {
       headless: true,

@@ -9,12 +9,37 @@
 
 FROM node:20-slim
 
-# Chromium do sistema + fontes e libs necessárias para o Puppeteer rodar.
+# Chromium do sistema + fontes e TODAS as libs de runtime que o headless precisa.
+# (o pacote `chromium` já puxa a maioria como dependência, mas listamos as
+#  principais explicitamente para evitar o clássico "Failed to launch the
+#  browser process" quando alguma lib compartilhada falta no container.)
 RUN apt-get update && apt-get install -y --no-install-recommends \
     chromium \
     fonts-freefont-ttf \
+    fonts-liberation \
     ca-certificates \
     openssl \
+    libasound2 \
+    libatk-bridge2.0-0 \
+    libatk1.0-0 \
+    libcups2 \
+    libdbus-1-3 \
+    libdrm2 \
+    libgbm1 \
+    libglib2.0-0 \
+    libgtk-3-0 \
+    libnspr4 \
+    libnss3 \
+    libpango-1.0-0 \
+    libx11-6 \
+    libxcb1 \
+    libxcomposite1 \
+    libxdamage1 \
+    libxext6 \
+    libxfixes3 \
+    libxkbcommon0 \
+    libxrandr2 \
+    libxshmfence1 \
   && rm -rf /var/lib/apt/lists/*
 
 # Não baixar o Chromium do Puppeteer — usar o instalado via apt.
