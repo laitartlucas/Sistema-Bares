@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { Save } from 'lucide-react'
 import type { StoreConfig, PriceCalcMethod } from '@pizzaria/shared'
 import { configApi } from '../api/config'
+import { ApiError } from '../api/client'
 import { useToast } from '../hooks/useToast'
 import { Input, Select } from '../components/ui/Input'
 import { Button } from '../components/ui/Button'
@@ -56,17 +57,20 @@ export function ConfigPage() {
   async function handleSave() {
     setSaving(true)
     try {
+      // Aceita vírgula como separador decimal; cai para 0 se ficar vazio/invalido
+      const taxa = parseFloat(String(form.taxaEntrega).replace(',', '.'))
       await configApi.update({
-        nome:                 form.nome,
+        nome:                 form.nome.trim() || undefined,
         endereco:             form.endereco || undefined,
         telefone:             form.telefone || undefined,
-        taxaEntrega:          parseFloat(form.taxaEntrega),
+        taxaEntrega:          Number.isFinite(taxa) ? taxa : 0,
         horarioFuncionamento: form.horarioFuncionamento || undefined,
         calcPrecoSabor:       form.calcPrecoSabor,
       })
       toast('Configurações salvas!', 'success')
-    } catch {
-      toast('Erro ao salvar', 'error')
+    } catch (err) {
+      const msg = err instanceof ApiError ? err.message : 'Erro ao salvar'
+      toast(msg, 'error')
     } finally {
       setSaving(false)
     }

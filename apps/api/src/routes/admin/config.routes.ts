@@ -10,7 +10,7 @@ const updateConfigSchema = z.object({
   nome: z.string().min(1).max(100).optional(),
   endereco: z.string().max(300).optional(),
   telefone: z.string().max(20).optional(),
-  taxaEntrega: z.number().min(0).optional(),
+  taxaEntrega: z.coerce.number().min(0).optional(),
   horarioFuncionamento: z.string().max(200).optional(),
   calcPrecoSabor: z.enum(['MAIOR_PRECO', 'MEDIA_PRECO']).optional(),
 })
