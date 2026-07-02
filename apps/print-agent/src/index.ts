@@ -1,4 +1,5 @@
 import 'dotenv/config'
+import os from 'os'
 import { io } from 'socket.io-client'
 import type { ServerToClientEvents, ClientToServerEvents } from '@pizzaria/shared'
 import { config } from './config'
@@ -10,7 +11,8 @@ const VERSION = '1.0.0'
 
 console.log(`🖨️  Agente de Impressão v${VERSION}`)
 console.log(`   API: ${config.apiUrl}`)
-console.log(`   Impressora: ${config.printerType}`)
+console.log(`   Impressora cozinha: \\\\${os.hostname()}\\${config.printerShares.COZINHA}`)
+console.log(`   Impressora caixa:   \\\\${os.hostname()}\\${config.printerShares.CAIXA}`)
 
 // ── Processamento de um job ───────────────────────────────────────────────────
 
@@ -32,7 +34,7 @@ async function processJob(job: Awaited<ReturnType<typeof fetchPendingJobs>>[numb
   const ref = job.order ? `Pedido #${job.order.numero}` : job.tipo
 
   try {
-    await printText(ticket)
+    await printText(ticket, job.tipo)
     await markJobDone(job.id)
     console.log(`✅ Job ${job.id} (${job.tipo}) impresso — ${ref}`)
   } catch (err) {

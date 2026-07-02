@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Plus, ChevronRight, Clock, MapPin, Flame, Sparkles } from 'lucide-react'
+import { Plus, Minus, ChevronRight, Clock, MapPin, Flame, Sparkles } from 'lucide-react'
 import type { PizzaSize, Beverage, StoreConfig } from '@pizzaria/shared'
 import { menuApi } from '../api/menu'
 import { useCart } from '../contexts/CartContext'
@@ -8,13 +8,12 @@ import { useAuth } from '../contexts/AuthContext'
 import { useToast } from '../hooks/useToast'
 import { Layout } from '../components/layout/Layout'
 import { formatCurrency } from '../utils/format'
-import { cn } from '../utils/cn'
 
 const SIZE_EMOJI = ['🍕', '🍕', '🍕', '🍕', '🍕']
 
 export default function HomePage() {
   const { user } = useAuth()
-  const { addBeverage, items: cartItems } = useCart()
+  const { addBeverage, updateQty, items: cartItems } = useCart()
   const { toast } = useToast()
   const navigate = useNavigate()
 
@@ -158,34 +157,49 @@ export default function HomePage() {
         {beverages.length > 0 && (
           <section>
             <h2 className="font-display font-extrabold text-pizza-dark text-xl mb-3">Bebidas geladas 🥤</h2>
-            <div className="grid grid-cols-2 gap-3">
+            <div className="flex flex-col gap-3">
               {beverages.map((bev) => {
                 const qty = cartBevCount(bev.id)
                 return (
                   <div
                     key={bev.id}
-                    className="bg-white rounded-4xl p-3.5 shadow-card flex flex-col"
+                    className="bg-white rounded-4xl shadow-card p-3.5 flex items-center gap-4"
                   >
-                    <div className="aspect-square rounded-3xl bg-gradient-to-br from-sky-50 to-cyan-100 flex items-center justify-center text-4xl mb-3 overflow-hidden">
+                    <div className="relative w-16 h-16 rounded-3xl bg-gradient-to-br from-sky-50 to-cyan-100 flex items-center justify-center text-3xl flex-shrink-0 overflow-hidden">
                       {bev.imagemUrl
                         ? <img src={bev.imagemUrl} alt={bev.nome} className="w-full h-full object-cover" />
                         : '🥤'}
                     </div>
-                    <p className="font-bold text-pizza-dark text-sm leading-tight line-clamp-2">{bev.nome}</p>
-                    {bev.volume && <p className="text-[11px] text-pizza-muted mt-0.5">{bev.volume}</p>}
-                    <div className="flex items-center justify-between mt-2">
-                      <span className="font-display font-extrabold text-pizza-red">{formatCurrency(bev.preco)}</span>
-                      <button
-                        onClick={() => handleAddBeverage(bev)}
-                        className={cn(
-                          'w-9 h-9 rounded-2xl flex items-center justify-center press-effect flex-shrink-0 transition-all',
-                          qty > 0
-                            ? 'bg-brand-flame text-white shadow-brand'
-                            : 'bg-brand-50 text-pizza-red',
-                        )}
-                      >
-                        {qty > 0 ? <span className="text-xs font-extrabold">{qty}</span> : <Plus size={18} />}
-                      </button>
+                    <div className="flex-1 min-w-0">
+                      <p className="font-display font-extrabold text-pizza-dark text-lg leading-tight truncate">{bev.nome}</p>
+                      {bev.volume && <p className="text-xs text-pizza-muted mt-0.5">{bev.volume}</p>}
+                    </div>
+                    <div className="flex flex-col items-end flex-shrink-0 gap-1.5">
+                      <span className="font-display font-extrabold text-pizza-red text-lg leading-none">{formatCurrency(bev.preco)}</span>
+                      {qty > 0 ? (
+                        <div className="flex items-center gap-2 bg-brand-50 rounded-full px-1 py-1">
+                          <button
+                            onClick={() => updateQty(`bev-${bev.id}`, qty - 1)}
+                            className="w-7 h-7 rounded-full bg-white text-pizza-red flex items-center justify-center press-effect shadow-sm"
+                          >
+                            <Minus size={14} />
+                          </button>
+                          <span className="text-xs font-extrabold text-pizza-dark w-3 text-center">{qty}</span>
+                          <button
+                            onClick={() => handleAddBeverage(bev)}
+                            className="w-7 h-7 rounded-full bg-brand-flame text-white flex items-center justify-center press-effect shadow-brand"
+                          >
+                            <Plus size={14} />
+                          </button>
+                        </div>
+                      ) : (
+                        <button
+                          onClick={() => handleAddBeverage(bev)}
+                          className="w-8 h-8 rounded-full bg-brand-50 text-pizza-red flex items-center justify-center press-effect flex-shrink-0"
+                        >
+                          <Plus size={16} />
+                        </button>
+                      )}
                     </div>
                   </div>
                 )

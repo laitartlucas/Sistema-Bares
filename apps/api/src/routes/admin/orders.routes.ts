@@ -14,6 +14,22 @@ router.get('/', validate(listOrdersQuerySchema, 'query'), async (req: Request, r
   } catch (err) { next(err) }
 })
 
+// GET /api/admin/orders/report — rotas fixas devem vir ANTES de /:id
+router.get('/report', validate(reportFiltersSchema, 'query'), async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const report = await orderService.adminSalesReport(req.query as any)
+    res.json({ success: true, data: report })
+  } catch (err) { next(err) }
+})
+
+// POST /api/admin/orders/report/print — enfileira o fechamento na impressora
+router.post('/report/print', validate(reportFiltersSchema, 'query'), async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const result = await orderService.adminPrintReport(req.query as any)
+    res.json({ success: true, data: result })
+  } catch (err) { next(err) }
+})
+
 router.get('/:id', async (req: Request, res: Response, next: NextFunction) => {
   try {
     const order = await orderService.adminGetOrder(req.params.id)
@@ -40,22 +56,6 @@ router.get('/:id/print-jobs', async (req: Request, res: Response, next: NextFunc
   try {
     const jobs = await printService.getJobsByOrder(req.params.id)
     res.json({ success: true, data: jobs })
-  } catch (err) { next(err) }
-})
-
-// GET /api/admin/orders/report?from=&to=&status=&formaPagamento=&saborId=&categoria=
-router.get('/report', validate(reportFiltersSchema, 'query'), async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    const report = await orderService.adminSalesReport(req.query as any)
-    res.json({ success: true, data: report })
-  } catch (err) { next(err) }
-})
-
-// POST /api/admin/orders/report/print — enfileira o fechamento na impressora
-router.post('/report/print', validate(reportFiltersSchema, 'query'), async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    const result = await orderService.adminPrintReport(req.query as any)
-    res.json({ success: true, data: result })
   } catch (err) { next(err) }
 })
 

@@ -285,6 +285,12 @@ export interface ReportTopItem {
   total: number
 }
 
+export interface ReportDailyEntry {
+  date: string
+  pedidos: number
+  faturamento: number
+}
+
 export interface SalesReport {
   from: string
   to: string
@@ -296,6 +302,7 @@ export interface SalesReport {
   porStatus: ReportStatusBreakdown[]
   topSabores: ReportTopItem[]
   topProdutos: ReportTopItem[]
+  dailyBreakdown: ReportDailyEntry[]
 }
 
 export const ORDER_STATUS_FLOW: OrderStatus[] = [

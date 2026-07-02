@@ -2,6 +2,9 @@ import { api } from './client'
 import type { PizzaSize, Crust, Flavor, Beverage } from '@pizzaria/shared'
 
 export const adminMenuApi = {
+  // Upload de imagem
+  uploadImage: (file: File) => api.upload<{ url: string }>('/admin/menu/upload', file),
+
   // Tamanhos
   listSizes:    ()                  => api.get<PizzaSize[]>('/admin/menu/sizes'),
   createSize:   (d: Partial<PizzaSize>) => api.post<PizzaSize>('/admin/menu/sizes', d),

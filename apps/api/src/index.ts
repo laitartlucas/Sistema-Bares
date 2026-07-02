@@ -6,6 +6,7 @@ import { initSocket } from './lib/socket'
 import { initWhatsApp } from './lib/whatsapp'
 import { prisma } from './lib/prisma'
 import { errorHandler } from './middleware/errorHandler'
+import { UPLOADS_DIR } from './middleware/upload'
 import routes from './routes'
 
 const app = express()
@@ -19,6 +20,7 @@ const allowedOrigins = (process.env.CORS_ORIGINS ?? 'http://localhost:5173').spl
 app.use(cors({ origin: allowedOrigins, credentials: true }))
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
+app.use('/uploads', express.static(UPLOADS_DIR))
 
 // ── Health check ──────────────────────────────────────────────────────────────
 app.get('/health', async (_req, res) => {
