@@ -5,7 +5,6 @@ import { Layout } from '../components/layout/Layout'
 import { Button } from '../components/ui/Button'
 import { EmptyState } from '../components/ui/EmptyState'
 import { formatCurrency } from '../utils/format'
-import { cn } from '../utils/cn'
 
 function CartItemRow({ item, onQty, onRemove }: {
   item: CartItem
@@ -21,109 +20,94 @@ function CartItemRow({ item, onQty, onRemove }: {
     : 'Bebida'
 
   return (
-    <div className="bg-white rounded-4xl shadow-card p-4 flex gap-3 animate-fade-in">
-      <div className={cn(
-        'w-14 h-14 rounded-3xl flex items-center justify-center text-2xl flex-shrink-0',
-        item.tipo === 'PIZZA'
-          ? 'bg-brand-flame shadow-brand'
-          : 'bg-gradient-to-br from-sky-50 to-cyan-100',
-      )}>
-        {item.tipo === 'PIZZA' ? '🍕' : '🥤'}
-      </div>
-      <div className="flex-1 min-w-0">
-        <p className="font-semibold text-pizza-dark text-sm leading-tight line-clamp-2">{name}</p>
-        <p className="text-xs text-pizza-muted mt-0.5">{subtitle}</p>
+    <div className="bg-white border-2 border-pizza-line rounded-2xl p-4 sm:px-5 flex items-center gap-4 flex-wrap animate-fade-in">
+      <div className="flex flex-col gap-0.5 flex-1 min-w-[180px]">
+        <span className="font-bold text-pizza-ink leading-tight">{name}</span>
+        <span className="text-pizza-muted text-[13px]">{subtitle}</span>
         {item.tipo === 'PIZZA' && item.observacoes && (
-          <p className="text-xs text-pizza-muted mt-0.5 italic">"{item.observacoes}"</p>
+          <span className="text-pizza-muted text-[13px] italic">"{item.observacoes}"</span>
         )}
-        <p className="text-sm font-bold text-pizza-red mt-1">
-          {formatCurrency(item.precoUnitario)}
-        </p>
       </div>
-      <div className="flex flex-col items-end justify-between gap-2 flex-shrink-0">
-        <button onClick={onRemove} className="text-gray-300 hover:text-red-400 transition-colors p-1">
-          <Trash2 size={15} />
+      <div className="flex items-center gap-2.5">
+        <button
+          onClick={() => onQty(item.quantidade - 1)}
+          className="w-8 h-8 rounded-full border-2 border-pizza-border bg-white text-pizza-dark grid place-items-center press-effect"
+        >
+          <Minus size={15} />
         </button>
-        <div className="flex items-center gap-2">
-          <button
-            onClick={() => onQty(item.quantidade - 1)}
-            className="w-7 h-7 rounded-lg bg-brand-50 flex items-center justify-center text-pizza-red press-effect border border-brand-200"
-          >
-            <Minus size={13} />
-          </button>
-          <span className="text-sm font-bold text-pizza-dark w-4 text-center">{item.quantidade}</span>
-          <button
-            onClick={() => onQty(item.quantidade + 1)}
-            className="w-7 h-7 rounded-lg bg-brand-flame flex items-center justify-center text-white shadow-brand press-effect"
-          >
-            <Plus size={13} />
-          </button>
-        </div>
+        <span className="font-bold text-pizza-dark min-w-[20px] text-center">{item.quantidade}</span>
+        <button
+          onClick={() => onQty(item.quantidade + 1)}
+          className="w-8 h-8 rounded-full border-2 border-pizza-border bg-white text-pizza-dark grid place-items-center press-effect"
+        >
+          <Plus size={15} />
+        </button>
       </div>
+      <span className="text-pizza-red font-bold text-[17px] min-w-[90px] text-right">
+        {formatCurrency(item.precoUnitario * item.quantidade)}
+      </span>
+      <button onClick={onRemove} className="text-pizza-muted hover:text-pizza-red transition-colors p-1">
+        <Trash2 size={16} />
+      </button>
     </div>
   )
 }
 
 export default function CartPage() {
-  const { items, total, updateQty, remove, clear } = useCart()
+  const { items, total, updateQty, remove } = useCart()
   const navigate = useNavigate()
 
-  if (items.length === 0) {
-    return (
-      <Layout>
-        <EmptyState
-          icon={<ShoppingCart size={32} />}
-          title="Carrinho vazio"
-          description="Adicione pizzas e bebidas para continuar"
-          action={
-            <Button onClick={() => navigate('/')}>Ver cardápio</Button>
-          }
-        />
-      </Layout>
-    )
-  }
-
   return (
-    <Layout hideNav>
-      <div className="px-4 pt-6 pb-4 flex flex-col gap-1">
-        <div className="flex items-center justify-between">
-          <h1 className="font-display text-3xl font-extrabold text-pizza-dark">Seu pedido</h1>
-          <button onClick={clear} className="text-xs text-pizza-muted hover:text-red-500 transition-colors font-medium underline underline-offset-2">
-            Limpar tudo
-          </button>
-        </div>
-        <p className="text-pizza-muted text-sm">{items.length} {items.length === 1 ? 'item' : 'itens'}</p>
-      </div>
+    <Layout>
+      <div className="max-w-[860px] mx-auto px-4 sm:px-6 py-10 flex flex-col gap-6">
+        <h1 className="font-display text-3xl sm:text-4xl text-pizza-dark">Carrinho</h1>
 
-      <div className="px-4 flex flex-col gap-3 pb-36">
-        {items.map((item) => (
-          <CartItemRow
-            key={item.id}
-            item={item}
-            onQty={(qty) => updateQty(item.id, qty)}
-            onRemove={() => remove(item.id)}
+        {items.length === 0 ? (
+          <EmptyState
+            icon={<ShoppingCart size={30} />}
+            title="Carrinho vazio"
+            description="Adicione pizzas e bebidas para continuar"
+            action={<Button onClick={() => navigate('/')}>Ver cardápio</Button>}
           />
-        ))}
+        ) : (
+          <>
+            <div className="flex flex-col gap-3">
+              {items.map((item) => (
+                <CartItemRow
+                  key={item.id}
+                  item={item}
+                  onQty={(qty) => updateQty(item.id, qty)}
+                  onRemove={() => remove(item.id)}
+                />
+              ))}
 
-        {/* Adicionar mais */}
-        <button
-          onClick={() => navigate('/')}
-          className="w-full border-2 border-dashed border-brand-200 rounded-3xl py-4 text-pizza-red font-semibold text-sm hover:bg-brand-50 transition-colors flex items-center justify-center gap-2"
-        >
-          <Plus size={16} />
-          Adicionar mais itens
-        </button>
-      </div>
+              <button
+                onClick={() => navigate('/')}
+                className="w-full border-2 border-dashed border-pizza-border rounded-2xl py-4 text-pizza-red font-bold text-sm hover:bg-brand-50 transition-colors flex items-center justify-center gap-2"
+              >
+                <Plus size={16} />
+                Adicionar mais itens
+              </button>
+            </div>
 
-      {/* Footer fixo */}
-      <div className="fixed bottom-0 left-0 right-0 glass border-t border-brand-100/70 px-4 py-4 pb-safe z-30">
-        <div className="flex justify-between text-sm px-1 mb-3">
-          <span className="text-pizza-muted font-medium">Subtotal</span>
-          <span className="font-bold text-pizza-dark text-base">{formatCurrency(total)}</span>
-        </div>
-        <Button fullWidth size="lg" onClick={() => navigate('/checkout')}>
-          Ir para o checkout →
-        </Button>
+            {/* Resumo escuro */}
+            <div className="bg-pizza-dark text-pizza-cream rounded-3xl p-6 flex flex-col gap-2.5">
+              <div className="flex justify-between text-[15px] text-pizza-sand">
+                <span>Subtotal</span><span>{formatCurrency(total)}</span>
+              </div>
+              <div className="flex justify-between text-[15px] text-pizza-sand">
+                <span>Entrega</span><span>calculada no checkout</span>
+              </div>
+              <div className="flex justify-between items-center border-t border-pizza-dark2 pt-3 mt-1">
+                <span className="font-bold text-[17px]">Total</span>
+                <span className="font-display text-3xl text-pizza-cheese">{formatCurrency(total)}</span>
+              </div>
+              <Button variant="cheese" fullWidth size="lg" className="mt-2 !rounded-full" onClick={() => navigate('/checkout')}>
+                Finalizar pedido
+              </Button>
+            </div>
+          </>
+        )}
       </div>
     </Layout>
   )

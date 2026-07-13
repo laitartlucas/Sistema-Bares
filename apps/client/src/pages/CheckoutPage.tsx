@@ -110,30 +110,28 @@ export default function CheckoutPage() {
 
   return (
     <Layout hideNav>
-      {/* Header */}
-      <div className="sticky top-0 z-20 glass border-b border-brand-100/70 pt-safe">
-        <div className="flex items-center gap-3 px-4 py-3">
-          <button onClick={() => navigate(-1)} className="w-9 h-9 rounded-2xl bg-white shadow-card flex items-center justify-center text-pizza-red press-effect">
+      <div className="max-w-[860px] mx-auto px-4 sm:px-6 pt-6 pb-40 flex flex-col gap-6">
+        {/* Header */}
+        <div className="flex items-center gap-3">
+          <button onClick={() => navigate(-1)} className="w-10 h-10 rounded-full border-2 border-pizza-border bg-white grid place-items-center text-pizza-dark press-effect">
             <ArrowLeft size={18} />
           </button>
-          <h1 className="font-display font-extrabold text-pizza-dark text-xl">Finalizar pedido</h1>
+          <h1 className="font-display text-2xl sm:text-3xl text-pizza-dark">Finalizar pedido</h1>
         </div>
-      </div>
 
-      <div className="px-4 py-5 flex flex-col gap-5 pb-40">
         {/* Entrega / Retirada */}
-        <section>
-          <h2 className="font-display font-extrabold text-pizza-dark mb-3">Como quer receber?</h2>
-          <div className="grid grid-cols-2 gap-2">
+        <section className="flex flex-col gap-3">
+          <h2 className="font-display text-xl text-pizza-dark">Como quer receber?</h2>
+          <div className="grid grid-cols-2 gap-3">
             {(['ENTREGA', 'RETIRADA'] as DeliveryType[]).map((type) => (
               <button
                 key={type}
                 onClick={() => setDeliveryType(type)}
                 className={cn(
-                  'flex flex-col items-center gap-2 py-5 rounded-3xl border-2 transition-all duration-200 press-effect',
+                  'flex flex-col items-center gap-2 py-6 rounded-2xl border-2 transition-all duration-200 press-effect',
                   deliveryType === type
-                    ? 'border-transparent bg-brand-flame text-white shadow-brand'
-                    : 'border-brand-100 bg-white text-pizza-muted',
+                    ? 'border-pizza-dark bg-pizza-dark text-pizza-cheese'
+                    : 'border-pizza-line bg-white text-pizza-muted',
                 )}
               >
                 {type === 'ENTREGA' ? <Home size={24} /> : <MapPin size={24} />}
@@ -145,28 +143,26 @@ export default function CheckoutPage() {
 
         {/* Endereço */}
         {deliveryType === 'ENTREGA' && (
-          <section>
-            <h2 className="font-display font-extrabold text-pizza-dark mb-3">Endereço de entrega</h2>
+          <section className="flex flex-col gap-3">
+            <h2 className="font-display text-xl text-pizza-dark">Endereço de entrega</h2>
             {addresses.length > 0 && (
-              <div className="flex flex-col gap-2 mb-3">
+              <div className="flex flex-col gap-2.5">
                 {addresses.map((addr) => (
                   <button
                     key={addr.id}
                     onClick={() => { setSelectedAddr(addr); setShowNewAddr(false) }}
                     className={cn(
-                      'w-full bg-white rounded-2xl p-4 flex items-start gap-3 border-2 shadow-card transition-all duration-200 press-effect text-left',
-                      selectedAddr?.id === addr.id ? 'border-pizza-red' : 'border-transparent',
+                      'w-full bg-white rounded-2xl p-4 flex items-center gap-3 border-2 transition-all duration-200 press-effect text-left',
+                      selectedAddr?.id === addr.id ? 'border-pizza-red bg-brand-50' : 'border-pizza-line',
                     )}
                   >
-                    <MapPin size={18} className="text-pizza-muted flex-shrink-0 mt-0.5" />
+                    <MapPin size={18} className="text-pizza-muted flex-shrink-0" />
                     <div className="flex-1 min-w-0">
-                      <p className="font-medium text-pizza-dark text-sm">
-                        {addr.rua}, {addr.numero}
-                      </p>
-                      <p className="text-xs text-pizza-muted">{addr.bairro}{addr.complemento ? ` · ${addr.complemento}` : ''}</p>
+                      <p className="font-bold text-pizza-ink text-[15px]">{addr.rua}, {addr.numero}</p>
+                      <p className="text-[13px] text-pizza-muted">{addr.bairro}{addr.complemento ? ` · ${addr.complemento}` : ''}</p>
                     </div>
                     {addr.principal && (
-                      <span className="text-[10px] bg-brand-100 text-pizza-red font-semibold px-2 py-0.5 rounded-full flex-shrink-0">Principal</span>
+                      <span className="text-xs bg-pizza-honey text-pizza-label font-bold px-2.5 py-1 rounded-full flex-shrink-0">Padrão</span>
                     )}
                   </button>
                 ))}
@@ -175,15 +171,15 @@ export default function CheckoutPage() {
             <button
               onClick={() => { setShowNewAddr(!showNewAddr); setSelectedAddr(null) }}
               className={cn(
-                'w-full border-2 border-dashed rounded-2xl py-3 text-sm font-semibold flex items-center justify-center gap-2 transition-colors',
-                showNewAddr ? 'border-pizza-red text-pizza-red bg-pizza-red/5' : 'border-brand-200 text-pizza-muted hover:border-pizza-red hover:text-pizza-red',
+                'w-full border-2 border-dashed rounded-2xl py-3 text-sm font-bold flex items-center justify-center gap-2 transition-colors',
+                showNewAddr ? 'border-pizza-red text-pizza-red bg-brand-50' : 'border-pizza-border text-pizza-muted hover:border-pizza-red hover:text-pizza-red',
               )}
             >
               <Plus size={16} />
               Outro endereço
             </button>
             {showNewAddr && (
-              <div className="mt-3 flex flex-col gap-3 animate-slide-up">
+              <div className="flex flex-col gap-3 animate-slide-up">
                 <Input label="Rua" placeholder="Rua das Flores" value={newAddr.rua} onChange={(e) => setNewAddr((a) => ({ ...a, rua: e.target.value }))} />
                 <div className="grid grid-cols-2 gap-3">
                   <Input label="Número" placeholder="123" value={newAddr.numero} onChange={(e) => setNewAddr((a) => ({ ...a, numero: e.target.value }))} />
@@ -196,30 +192,26 @@ export default function CheckoutPage() {
         )}
 
         {/* Pagamento */}
-        <section>
-          <h2 className="font-display font-extrabold text-pizza-dark mb-3">Forma de pagamento</h2>
-          <div className="flex flex-col gap-2">
+        <section className="flex flex-col gap-3">
+          <h2 className="font-display text-xl text-pizza-dark">Forma de pagamento</h2>
+          <div className="flex flex-col gap-2.5">
             {PAYMENT_OPTIONS.map(({ value, label, icon }) => (
               <button
                 key={value}
                 onClick={() => setPayment(value)}
                 className={cn(
-                  'w-full bg-white rounded-2xl p-4 flex items-center gap-3 border-2 shadow-card transition-all duration-200 press-effect',
-                  payment === value ? 'border-pizza-red' : 'border-transparent',
+                  'w-full bg-white rounded-2xl p-4 flex items-center gap-3 border-2 transition-all duration-200 press-effect',
+                  payment === value ? 'border-pizza-red bg-brand-50' : 'border-pizza-line',
                 )}
               >
-                <span className={cn('transition-colors', payment === value ? 'text-pizza-red' : 'text-pizza-muted')}>
-                  {icon}
-                </span>
-                <span className={cn('font-semibold text-sm flex-1 text-left', payment === value ? 'text-pizza-dark' : 'text-pizza-muted')}>
-                  {label}
-                </span>
-                {payment === value && <span className="w-5 h-5 rounded-full bg-brand-flame flex items-center justify-center"><span className="w-2 h-2 rounded-full bg-white" /></span>}
+                <span className={cn('transition-colors', payment === value ? 'text-pizza-red' : 'text-pizza-muted')}>{icon}</span>
+                <span className={cn('font-bold text-sm flex-1 text-left', payment === value ? 'text-pizza-ink' : 'text-pizza-muted')}>{label}</span>
+                {payment === value && <span className="w-5 h-5 rounded-full bg-pizza-red grid place-items-center"><span className="w-2 h-2 rounded-full bg-white" /></span>}
               </button>
             ))}
           </div>
           {payment === 'DINHEIRO' && (
-            <div className="mt-3 animate-slide-up">
+            <div className="animate-slide-up">
               <Input
                 label="Troco para (opcional)"
                 placeholder="Ex: 100,00"
@@ -234,10 +226,8 @@ export default function CheckoutPage() {
         </section>
 
         {/* Resumo do pedido */}
-        <section className="bg-white rounded-4xl shadow-card p-5">
-          <h2 className="font-display font-extrabold text-pizza-dark mb-3">Resumo</h2>
-
-          {/* Itens escolhidos */}
+        <section className="bg-white border-2 border-pizza-line rounded-3xl p-5 sm:p-6">
+          <h2 className="font-display text-xl text-pizza-dark mb-3">Resumo</h2>
           <div className="flex flex-col gap-3 mb-4">
             {items.map((item) => {
               const nome = item.tipo === 'PIZZA'
@@ -248,14 +238,8 @@ export default function CheckoutPage() {
                 : 'Bebida'
               return (
                 <div key={item.id} className="flex gap-3">
-                  <div className={cn(
-                    'w-10 h-10 rounded-2xl flex items-center justify-center text-lg flex-shrink-0',
-                    item.tipo === 'PIZZA' ? 'bg-brand-flame shadow-brand' : 'bg-gradient-to-br from-sky-50 to-cyan-100',
-                  )}>
-                    {item.tipo === 'PIZZA' ? '🍕' : '🥤'}
-                  </div>
                   <div className="flex-1 min-w-0">
-                    <p className="font-semibold text-pizza-dark text-sm leading-tight">
+                    <p className="font-bold text-pizza-ink text-sm leading-tight">
                       <span className="text-pizza-red">{item.quantidade}×</span> {nome}
                     </p>
                     <p className="text-xs text-pizza-muted mt-0.5">{subtitulo}</p>
@@ -263,38 +247,39 @@ export default function CheckoutPage() {
                       <p className="text-xs text-pizza-muted mt-0.5 italic">"{item.observacoes}"</p>
                     )}
                   </div>
-                  <span className="text-sm font-bold text-pizza-dark flex-shrink-0">
+                  <span className="text-sm font-bold text-pizza-ink flex-shrink-0">
                     {formatCurrency(item.precoUnitario * item.quantidade)}
                   </span>
                 </div>
               )
             })}
           </div>
-
-          <div className="flex flex-col gap-2 border-t border-dashed border-gray-200 pt-3">
+          <div className="flex flex-col gap-2 border-t border-dashed border-pizza-border pt-3">
             <div className="flex justify-between text-sm">
               <span className="text-pizza-muted">Subtotal ({items.length} {items.length === 1 ? 'item' : 'itens'})</span>
-              <span className="font-medium text-pizza-dark">{formatCurrency(total)}</span>
+              <span className="font-medium text-pizza-ink">{formatCurrency(total)}</span>
             </div>
             {deliveryType === 'ENTREGA' && (
               <div className="flex justify-between text-sm">
                 <span className="text-pizza-muted">Taxa de entrega</span>
-                <span className="font-medium text-pizza-dark">{formatCurrency(taxaEntrega)}</span>
+                <span className="font-medium text-pizza-ink">{formatCurrency(taxaEntrega)}</span>
               </div>
             )}
-            <div className="border-t border-dashed border-gray-200 pt-2 flex justify-between">
-              <span className="font-bold text-pizza-dark">Total</span>
-              <span className="font-bold text-pizza-red text-lg">{formatCurrency(totalFinal)}</span>
+            <div className="border-t border-dashed border-pizza-border pt-2 flex justify-between items-center">
+              <span className="font-bold text-pizza-ink">Total</span>
+              <span className="font-display text-2xl text-pizza-red">{formatCurrency(totalFinal)}</span>
             </div>
           </div>
         </section>
       </div>
 
       {/* Footer */}
-      <div className="fixed bottom-0 left-0 right-0 glass border-t border-brand-100/70 px-4 py-4 pb-safe z-30">
-        <Button fullWidth size="lg" loading={loading} onClick={handlePlaceOrder}>
-          Confirmar pedido · {formatCurrency(totalFinal)}
-        </Button>
+      <div className="fixed bottom-0 left-0 right-0 bg-pizza-dark shadow-[0_-8px_30px_rgba(0,0,0,0.2)] px-4 py-4 pb-safe z-30">
+        <div className="max-w-[860px] mx-auto">
+          <Button variant="cheese" fullWidth size="lg" className="!rounded-full" loading={loading} onClick={handlePlaceOrder}>
+            Confirmar pedido · {formatCurrency(totalFinal)}
+          </Button>
+        </div>
       </div>
     </Layout>
   )

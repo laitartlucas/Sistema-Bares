@@ -3,21 +3,21 @@ import { ORDER_STATUS_LABELS } from '@pizzaria/shared'
 import { cn } from '../../utils/cn'
 
 const STATUS_STYLES: Record<OrderStatus, string> = {
-  RECEBIDO:          'bg-blue-50   text-blue-700   border-blue-200',
-  EM_PREPARO:        'bg-amber-50  text-amber-700  border-amber-200',
-  PRONTO:            'bg-purple-50 text-purple-700 border-purple-200',
-  SAIU_PARA_ENTREGA: 'bg-green-50  text-green-700  border-green-200',
-  ENTREGUE:          'bg-gray-50   text-gray-600   border-gray-200',
-  CANCELADO:         'bg-red-50    text-red-600    border-red-200',
+  RECEBIDO:          'bg-pizza-honey text-pizza-label border-[#F0D9A0]',
+  EM_PREPARO:        'bg-pizza-honey text-pizza-label border-[#F0D9A0]',
+  PRONTO:            'bg-pizza-honey text-pizza-label border-[#F0D9A0]',
+  SAIU_PARA_ENTREGA: 'bg-pizza-honey text-pizza-label border-[#F0D9A0]',
+  ENTREGUE:          'bg-[#EAF7EE] text-[#1E7A3C] border-[#C4E8CF]',
+  CANCELADO:         'bg-[#FDEBE9] text-[#C92B1E] border-[#F5C6C1]',
 }
 
 const STATUS_DOTS: Record<OrderStatus, string> = {
-  RECEBIDO:          'bg-blue-500',
-  EM_PREPARO:        'bg-amber-500',
-  PRONTO:            'bg-purple-500',
-  SAIU_PARA_ENTREGA: 'bg-green-500',
-  ENTREGUE:          'bg-gray-400',
-  CANCELADO:         'bg-red-500',
+  RECEBIDO:          'bg-pizza-label',
+  EM_PREPARO:        'bg-pizza-label',
+  PRONTO:            'bg-pizza-label',
+  SAIU_PARA_ENTREGA: 'bg-pizza-label',
+  ENTREGUE:          'bg-[#1E7A3C]',
+  CANCELADO:         'bg-[#C92B1E]',
 }
 
 interface OrderStatusBadgeProps {

@@ -5,45 +5,51 @@ export default {
   theme: {
     extend: {
       colors: {
-        // Vermelho vivo "apetitoso" — base da identidade Dom Luigi
+        // Vermelho "apetitoso" — base da identidade Solange Delivery
         brand: {
-          50:  '#FFF1F1',
-          100: '#FFDEDF',
-          200: '#FFC2C4',
-          300: '#FF9398',
-          400: '#FB5A62',
-          500: '#EA1D2C',
-          600: '#D10F20',
-          700: '#AF0B1A',
-          800: '#900E1A',
-          900: '#76111B',
-          950: '#41040A',
+          50:  '#FDEBE9',
+          100: '#FBD7D3',
+          200: '#F4B0A9',
+          300: '#EC8880',
+          400: '#E85E52',
+          500: '#E2382A',
+          600: '#C92B1E',
+          700: '#A81F15',
+          800: '#8A1810',
+          900: '#6E140D',
+          950: '#3F0805',
         },
         // Tokens semânticos usados em todo o app
         pizza: {
-          red:    '#EA1D2C', // vermelho vivo principal
-          tomato: '#FF5436', // laranja-tomate para gradientes/realces
+          red:    '#E2382A', // vermelho principal (CTAs, preços, links)
+          tomato: '#FF6A3D', // laranja-tomate para realces
           crust:  '#E8A65A', // dourado de borda assada
-          cheese: '#FFC53D', // amarelo queijo / energia
-          basil:  '#2FA869', // verde manjericão (frescor / "aberto")
-          cream:  '#FFF7F2', // fundo creme quente
-          dark:   '#1A1012', // quase-preto quente (texto)
-          muted:  '#8A6F69', // cinza quente (texto secundário)
+          cheese: '#FFC72C', // amarelo (destaques, CTAs secundários)
+          honey:  '#FFF3D6', // fundo de badge amarelo
+          label:  '#9A6B00', // texto sobre badge amarelo
+          basil:  '#2FA869', // verde ("aberto agora")
+          cream:  '#FBF5EA', // fundo creme (página)
+          dark:   '#16110C', // marrom quase-preto (headers/hero/cards escuros)
+          dark2:  '#221A12', // superfície escura secundária
+          ink:    '#2A231B', // texto do corpo
+          sand:   '#CFC4B4', // texto claro sobre fundo escuro
+          line:   '#F1E7D6', // bordas de cards claros
+          border: '#E8DCC8', // bordas de inputs / tracejados
+          muted:  '#8A7F70', // texto secundário
         },
       },
       fontFamily: {
-        // Display expressivo e moderno para títulos
-        display: ['"Bricolage Grotesque"', '"Plus Jakarta Sans"', 'system-ui', 'sans-serif'],
-        // Wordmark / toques elegantes
-        serif: ['"Playfair Display"', 'Georgia', 'serif'],
-        sans: ['"Plus Jakarta Sans"', 'system-ui', 'sans-serif'],
+        // Display expressivo para títulos e wordmark
+        display: ['"Lilita One"', 'system-ui', 'cursive'],
+        serif: ['"Lilita One"', 'Georgia', 'cursive'],
+        sans: ['"Karla"', 'system-ui', 'sans-serif'],
       },
       backgroundImage: {
         'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
-        // Gradiente quente da marca (vermelho → tomate)
-        'brand-flame': 'linear-gradient(135deg, #EA1D2C 0%, #FF5436 60%, #FF7A3C 100%)',
-        'brand-flame-soft': 'linear-gradient(135deg, #FFE0DE 0%, #FFF1F1 100%)',
-        'cheese-glow': 'radial-gradient(120% 120% at 0% 0%, #FFC53D 0%, #FF5436 55%, #EA1D2C 100%)',
+        // Gradiente vermelho da marca (CTAs primários)
+        'brand-flame': 'linear-gradient(135deg, #E2382A 0%, #C92B1E 100%)',
+        'brand-flame-soft': 'linear-gradient(135deg, #FDEBE9 0%, #FFF3D6 100%)',
+        'cheese-glow': 'radial-gradient(120% 120% at 0% 0%, #FFC72C 0%, #E2382A 100%)',
         'hero-pattern': "url(\"data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23FFFFFF' fill-opacity='0.07'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E\")",
       },
       animation: {
@@ -65,12 +71,12 @@ export default {
         shimmer:  { '0%': { backgroundPosition: '200% 0' }, '100%': { backgroundPosition: '-200% 0' } },
       },
       boxShadow: {
-        'soft':     '0 2px 15px -3px rgba(26,16,18,.08), 0 10px 24px -2px rgba(26,16,18,.05)',
-        'card':     '0 1px 3px rgba(26,16,18,.06), 0 6px 16px -6px rgba(26,16,18,.10)',
-        'card-lg':  '0 8px 30px -8px rgba(26,16,18,.18)',
-        'brand':    '0 8px 22px -6px rgba(234,29,44,.45)',
-        'brand-lg': '0 14px 38px -8px rgba(234,29,44,.42)',
-        'cheese':   '0 8px 22px -6px rgba(255,180,32,.5)',
+        'soft':     '0 2px 15px -3px rgba(22,17,12,.08), 0 10px 24px -2px rgba(22,17,12,.05)',
+        'card':     '0 1px 3px rgba(22,17,12,.05), 0 6px 16px -6px rgba(22,17,12,.08)',
+        'card-lg':  '0 8px 30px -8px rgba(22,17,12,.16)',
+        'brand':    '0 8px 20px -4px rgba(226,56,42,.35)',
+        'brand-lg': '0 14px 34px -8px rgba(226,56,42,.40)',
+        'cheese':   '0 8px 22px -6px rgba(255,199,44,.50)',
       },
       borderRadius: {
         '4xl': '2rem',

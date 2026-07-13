@@ -36,9 +36,9 @@ export function Modal({ open, onClose, title, children, size = 'md' }: ModalProp
         )}
       >
         {title && (
-          <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
-            <h2 className="font-display text-lg font-semibold text-pizza-dark">{title}</h2>
-            <button onClick={onClose} className="text-gray-400 hover:text-gray-600 p-1 rounded-xl hover:bg-gray-100 transition-colors">
+          <div className="flex items-center justify-between px-6 py-4 border-b border-pizza-line">
+            <h2 className="font-display text-xl text-pizza-dark">{title}</h2>
+            <button onClick={onClose} className="text-pizza-muted hover:text-pizza-ink p-1 rounded-xl hover:bg-pizza-cream transition-colors">
               <X size={20} />
             </button>
           </div>

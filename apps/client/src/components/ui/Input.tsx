@@ -12,7 +12,7 @@ export function Input({ label, error, leftIcon, className, id, ...props }: Input
   return (
     <div className="flex flex-col gap-1.5">
       {label && (
-        <label htmlFor={inputId} className="text-sm font-semibold text-pizza-dark">
+        <label htmlFor={inputId} className="text-sm font-bold text-pizza-ink">
           {label}
         </label>
       )}
@@ -25,10 +25,10 @@ export function Input({ label, error, leftIcon, className, id, ...props }: Input
         <input
           id={inputId}
           className={cn(
-            'w-full rounded-2xl border bg-white px-4 py-3 text-sm text-pizza-dark placeholder-pizza-muted/60',
+            'w-full rounded-2xl border-2 bg-white px-4 py-3 text-[15px] text-pizza-ink placeholder-pizza-muted/70',
             'transition-all duration-150 outline-none',
-            'focus:ring-2 focus:ring-pizza-red/30 focus:border-pizza-red',
-            error ? 'border-red-400 bg-red-50' : 'border-gray-200',
+            'focus:border-pizza-cheese focus:ring-2 focus:ring-pizza-cheese/30',
+            error ? 'border-red-400 bg-red-50' : 'border-pizza-border',
             leftIcon !== undefined ? 'pl-10' : undefined,
             className,
           )}
@@ -50,7 +50,7 @@ export function Textarea({ label, error, className, id, ...props }: TextareaProp
   return (
     <div className="flex flex-col gap-1.5">
       {label && (
-        <label htmlFor={inputId} className="text-sm font-semibold text-pizza-dark">
+        <label htmlFor={inputId} className="text-sm font-bold text-pizza-ink">
           {label}
         </label>
       )}
@@ -58,10 +58,10 @@ export function Textarea({ label, error, className, id, ...props }: TextareaProp
         id={inputId}
         rows={3}
         className={cn(
-          'w-full rounded-2xl border bg-white px-4 py-3 text-sm text-pizza-dark placeholder-pizza-muted/60 resize-none',
+          'w-full rounded-2xl border-2 bg-white px-4 py-3 text-[15px] text-pizza-ink placeholder-pizza-muted/70 resize-none',
           'transition-all duration-150 outline-none',
-          'focus:ring-2 focus:ring-pizza-red/30 focus:border-pizza-red',
-          error ? 'border-red-400 bg-red-50' : 'border-gray-200',
+          'focus:border-pizza-cheese focus:ring-2 focus:ring-pizza-cheese/30',
+          error ? 'border-red-400 bg-red-50' : 'border-pizza-border',
           className,
         )}
         {...props}

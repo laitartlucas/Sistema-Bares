@@ -3,7 +3,7 @@ import { cn } from '../../utils/cn'
 import { Spinner } from './Spinner'
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-  variant?: 'primary' | 'secondary' | 'ghost' | 'danger' | 'dark'
+  variant?: 'primary' | 'secondary' | 'ghost' | 'danger' | 'dark' | 'cheese'
   size?: 'sm' | 'md' | 'lg'
   loading?: boolean
   fullWidth?: boolean
@@ -24,11 +24,12 @@ export function Button({
   ...props
 }: ButtonProps) {
   const base =
-    'relative inline-flex items-center justify-center gap-2 font-display font-bold rounded-2xl press-effect transition-all duration-150 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-pizza-cream disabled:opacity-50 disabled:pointer-events-none'
+    'relative inline-flex items-center justify-center gap-2 font-sans font-bold rounded-2xl press-effect transition-all duration-150 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-pizza-cream disabled:opacity-50 disabled:pointer-events-none'
 
   const variants = {
     primary:   'bg-brand-flame text-white shadow-brand hover:shadow-brand-lg focus:ring-pizza-red',
-    secondary: 'bg-brand-50 text-pizza-red border border-brand-200 hover:bg-brand-100 focus:ring-brand-300',
+    cheese:    'bg-pizza-cheese text-pizza-dark shadow-cheese hover:bg-[#FFD75E] focus:ring-pizza-cheese',
+    secondary: 'bg-[#FFF9EA] text-pizza-label border-2 border-pizza-cheese hover:bg-pizza-honey focus:ring-pizza-cheese',
     ghost:     'text-pizza-muted hover:bg-brand-50 hover:text-pizza-red focus:ring-brand-200',
     danger:    'bg-red-50 text-red-600 border border-red-200 hover:bg-red-100 focus:ring-red-300',
     dark:      'bg-pizza-dark text-white shadow-card-lg hover:bg-black focus:ring-pizza-dark',

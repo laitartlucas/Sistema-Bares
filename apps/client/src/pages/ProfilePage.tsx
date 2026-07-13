@@ -83,27 +83,24 @@ export default function ProfilePage() {
 
   return (
     <Layout>
-      <div className="px-4 pt-6 pb-4">
-        <h1 className="font-display text-3xl font-extrabold text-pizza-dark">Meu Perfil</h1>
-      </div>
+      <div className="max-w-[860px] mx-auto px-4 sm:px-6 py-10 flex flex-col gap-6">
+        <h1 className="font-display text-3xl sm:text-4xl text-pizza-dark">Meu Perfil</h1>
 
-      <div className="px-4 flex flex-col gap-5 pb-6">
         {/* User card */}
-        <div className="relative bg-brand-flame rounded-4xl shadow-brand-lg p-5 flex items-center gap-4 overflow-hidden">
-          <div className="absolute inset-0 bg-hero-pattern opacity-50" />
-          <div className="relative w-16 h-16 rounded-2xl bg-white/20 backdrop-blur-sm flex items-center justify-center text-2xl text-white font-display font-extrabold shrink-0">
+        <div className="bg-pizza-dark rounded-3xl p-6 flex items-center gap-4">
+          <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-pizza-cheese text-pizza-dark grid place-items-center font-display text-2xl sm:text-3xl shrink-0">
             {user?.nome.charAt(0).toUpperCase()}
           </div>
-          <div className="relative flex-1 min-w-0">
-            <h2 className="font-display font-extrabold text-white text-xl leading-tight truncate">{user?.nome}</h2>
+          <div className="flex-1 min-w-0">
+            <h2 className="font-bold text-pizza-cream text-lg sm:text-xl leading-tight truncate">{user?.nome}</h2>
             <div className="flex items-center gap-2 mt-0.5">
-              <p className="text-white/85 text-sm flex items-center gap-1">
+              <p className="text-pizza-muted text-sm flex items-center gap-1">
                 <Phone size={13} />
                 {user?.telefone ? formatPhone(user.telefone) : '—'}
               </p>
               <button
                 onClick={() => { setNewPhone(user?.telefone ?? ''); setShowEditPhone(true) }}
-                className="text-white/90 bg-white/20 rounded-lg p-1 press-effect"
+                className="text-pizza-cream/90 bg-white/10 rounded-lg p-1 press-effect hover:bg-white/20 transition-colors"
                 title="Editar telefone"
               >
                 <Pencil size={12} />
@@ -113,41 +110,38 @@ export default function ProfilePage() {
         </div>
 
         {/* Endereços */}
-        <section>
-          <div className="flex items-center justify-between mb-3">
-            <h2 className="font-display font-extrabold text-pizza-dark text-lg">Meus endereços</h2>
+        <section className="flex flex-col gap-3">
+          <div className="flex items-baseline justify-between">
+            <h2 className="font-display text-xl text-pizza-dark">Meus endereços</h2>
             <button
               onClick={() => setShowAddAddr(true)}
-              className="flex items-center gap-1 text-pizza-red text-sm font-semibold press-effect"
+              className="text-pizza-red text-sm font-bold press-effect"
             >
-              <Plus size={15} />
-              Adicionar
+              + Adicionar
             </button>
           </div>
 
           {addresses.length === 0 ? (
-            <div className="bg-white rounded-2xl shadow-card p-6 text-center">
-              <MapPin size={28} className="mx-auto text-gray-300 mb-2" />
+            <div className="bg-white border-2 border-dashed border-pizza-border rounded-[18px] p-10 flex flex-col items-center gap-2">
+              <MapPin size={26} className="text-pizza-muted/60" />
               <p className="text-pizza-muted text-sm">Nenhum endereço cadastrado</p>
             </div>
           ) : (
-            <div className="flex flex-col gap-2">
+            <div className="flex flex-col gap-2.5">
               {addresses.map((addr) => (
-                <div key={addr.id} className="bg-white rounded-2xl shadow-card p-4 flex items-start gap-3">
-                  <MapPin size={18} className="text-pizza-muted flex-shrink-0 mt-0.5" />
+                <div key={addr.id} className="bg-white border-2 border-pizza-line rounded-2xl p-4 sm:px-5 flex items-center gap-3">
+                  <MapPin size={18} className="text-pizza-muted flex-shrink-0" />
                   <div className="flex-1 min-w-0">
-                    <p className="font-medium text-pizza-dark text-sm">
-                      {addr.rua}, {addr.numero}
-                    </p>
-                    <p className="text-xs text-pizza-muted">{addr.bairro}{addr.complemento ? ` · ${addr.complemento}` : ''}</p>
-                    {addr.referencia && <p className="text-xs text-pizza-muted">{addr.referencia}</p>}
-                    {addr.principal && (
-                      <span className="inline-flex items-center gap-1 text-[10px] bg-brand-100 text-pizza-red font-semibold px-2 py-0.5 rounded-full mt-1">
-                        <Star size={9} fill="currentColor" /> Principal
-                      </span>
-                    )}
+                    <p className="font-bold text-pizza-ink text-[15px]">{addr.rua}, {addr.numero}</p>
+                    <p className="text-[13px] text-pizza-muted">{addr.bairro}{addr.complemento ? ` · ${addr.complemento}` : ''}</p>
+                    {addr.referencia && <p className="text-[13px] text-pizza-muted">{addr.referencia}</p>}
                   </div>
-                  <button onClick={() => handleRemoveAddress(addr.id)} className="text-gray-300 hover:text-red-400 transition-colors p-1 flex-shrink-0">
+                  {addr.principal && (
+                    <span className="inline-flex items-center gap-1 bg-pizza-honey text-pizza-label font-bold text-xs px-2.5 py-1 rounded-full flex-shrink-0">
+                      <Star size={10} fill="currentColor" /> Padrão
+                    </span>
+                  )}
+                  <button onClick={() => handleRemoveAddress(addr.id)} className="text-pizza-muted hover:text-pizza-red transition-colors p-1 flex-shrink-0">
                     <Trash2 size={15} />
                   </button>
                 </div>
@@ -157,20 +151,19 @@ export default function ProfilePage() {
         </section>
 
         {/* Ações */}
-        <section className="bg-white rounded-4xl shadow-card overflow-hidden">
+        <section className="bg-white border-2 border-pizza-line rounded-[18px] flex flex-col">
           <button
             onClick={() => navigate('/orders')}
-            className="w-full flex items-center gap-3 p-4 hover:bg-brand-50 transition-colors border-b border-gray-100 press-effect"
+            className="w-full flex items-center justify-between gap-3 px-5 py-4 hover:bg-pizza-cream transition-colors border-b border-pizza-line press-effect font-bold text-[15px] text-pizza-ink"
           >
-            <span className="text-pizza-muted text-sm font-medium flex-1 text-left">Meus pedidos</span>
-            <ChevronRight size={16} className="text-gray-300" />
+            Meus pedidos <ChevronRight size={16} className="text-pizza-muted" />
           </button>
           <button
             onClick={handleLogout}
-            className="w-full flex items-center gap-3 p-4 hover:bg-red-50 transition-colors press-effect text-red-500"
+            className="w-full flex items-center gap-3 px-5 py-4 hover:bg-brand-50 transition-colors press-effect text-pizza-red font-bold text-[15px]"
           >
             <LogOut size={18} className="flex-shrink-0" />
-            <span className="text-sm font-semibold flex-1 text-left">Sair da conta</span>
+            Sair da conta
           </button>
         </section>
       </div>

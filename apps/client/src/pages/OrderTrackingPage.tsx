@@ -112,41 +112,39 @@ export default function OrderTrackingPage() {
   const enderecoEntrega = order.enderecoEntrega as { rua: string; numero: string; bairro: string; complemento?: string } | undefined
 
   return (
-    <Layout hideNav>
-      {/* Header */}
-      <div className="sticky top-0 z-20 glass border-b border-brand-100/70 pt-safe">
-        <div className="flex items-center gap-3 px-4 py-3">
-          <button onClick={() => navigate('/orders')} className="w-9 h-9 rounded-2xl bg-white shadow-card flex items-center justify-center text-pizza-red press-effect">
+    <Layout>
+      <div className="max-w-[860px] mx-auto px-4 sm:px-6 py-8 flex flex-col gap-5">
+        {/* Header */}
+        <div className="flex items-center gap-3">
+          <button onClick={() => navigate('/orders')} className="w-10 h-10 rounded-full border-2 border-pizza-border bg-white grid place-items-center text-pizza-dark press-effect">
             <ArrowLeft size={18} />
           </button>
           <div className="flex-1">
-            <p className="text-xs text-pizza-muted font-medium">Pedido #{order.numero}</p>
-            <h1 className="font-display font-extrabold text-pizza-dark text-lg leading-tight">Acompanhamento</h1>
+            <p className="text-sm text-pizza-muted">Pedido #{order.numero}</p>
+            <h1 className="font-display text-2xl text-pizza-dark leading-tight">Acompanhamento</h1>
           </div>
           <OrderStatusBadge status={order.status as OrderStatus} animated />
         </div>
-      </div>
 
-      <div className="px-4 py-5 flex flex-col gap-5">
         {/* Timeline */}
-        <div className="bg-white rounded-4xl shadow-card-lg p-5">
-          <h2 className="font-display font-extrabold text-pizza-dark mb-4">Status do pedido</h2>
+        <div className="bg-white border-2 border-pizza-line rounded-3xl p-5 sm:p-6">
+          <h2 className="font-display text-xl text-pizza-dark mb-4">Status do pedido</h2>
           <OrderTimeline status={order.status as OrderStatus} tipo={order.tipo} />
         </div>
 
         {/* Itens */}
-        <div className="bg-white rounded-4xl shadow-card p-5">
-          <h2 className="font-display font-extrabold text-pizza-dark mb-3">Itens</h2>
+        <div className="bg-white border-2 border-pizza-line rounded-3xl p-5 sm:p-6">
+          <h2 className="font-display text-xl text-pizza-dark mb-3">Itens</h2>
           <div className="flex flex-col gap-2">
             {order.itens?.map((item) => (
               <div key={item.id} className="flex justify-between text-sm gap-2">
                 <div className="flex-1 min-w-0">
                   {item.tipo === 'PIZZA' ? (
-                    <p className="text-pizza-dark font-medium leading-tight">
+                    <p className="text-pizza-ink font-bold leading-tight">
                       {item.quantidade}× {item.sabores?.map((s) => s.flavor?.nome).join(' + ')}
                     </p>
                   ) : (
-                    <p className="text-pizza-dark font-medium leading-tight">
+                    <p className="text-pizza-ink font-bold leading-tight">
                       {item.quantidade}× {item.bebida?.nome}
                     </p>
                   )}
@@ -157,33 +155,33 @@ export default function OrderTrackingPage() {
                   )}
                   {item.observacoes && <p className="text-xs text-pizza-muted italic">"{item.observacoes}"</p>}
                 </div>
-                <span className="text-pizza-red font-semibold shrink-0">
+                <span className="text-pizza-red font-bold shrink-0">
                   {formatCurrency(item.precoUnitario * item.quantidade)}
                 </span>
               </div>
             ))}
           </div>
-          <div className="border-t border-dashed border-gray-200 mt-3 pt-3 flex justify-between">
-            <span className="font-bold text-pizza-dark">Total</span>
+          <div className="border-t border-dashed border-pizza-border mt-3 pt-3 flex justify-between">
+            <span className="font-bold text-pizza-ink">Total</span>
             <span className="font-bold text-pizza-red">{formatCurrency(order.total)}</span>
           </div>
         </div>
 
         {/* Detalhes */}
-        <div className="bg-white rounded-4xl shadow-card p-5 flex flex-col gap-2">
-          <h2 className="font-display font-extrabold text-pizza-dark mb-1">Detalhes</h2>
+        <div className="bg-white border-2 border-pizza-line rounded-3xl p-5 sm:p-6 flex flex-col gap-2">
+          <h2 className="font-display text-xl text-pizza-dark mb-1">Detalhes</h2>
           <div className="flex justify-between text-sm">
             <span className="text-pizza-muted">Pedido em</span>
-            <span className="text-pizza-dark">{formatDate(order.createdAt)}</span>
+            <span className="text-pizza-ink">{formatDate(order.createdAt)}</span>
           </div>
           <div className="flex justify-between text-sm">
             <span className="text-pizza-muted">Pagamento</span>
-            <span className="text-pizza-dark">{PAYMENT_METHOD_LABELS[order.formaPagamento as keyof typeof PAYMENT_METHOD_LABELS]}</span>
+            <span className="text-pizza-ink">{PAYMENT_METHOD_LABELS[order.formaPagamento as keyof typeof PAYMENT_METHOD_LABELS]}</span>
           </div>
           {order.tipo === 'ENTREGA' && enderecoEntrega && (
             <div className="flex justify-between text-sm">
               <span className="text-pizza-muted">Entrega</span>
-              <span className="text-pizza-dark text-right max-w-[180px]">
+              <span className="text-pizza-ink text-right max-w-[180px]">
                 {enderecoEntrega.rua}, {enderecoEntrega.numero} — {enderecoEntrega.bairro}
               </span>
             </div>
@@ -191,7 +189,7 @@ export default function OrderTrackingPage() {
           {order.tipo === 'RETIRADA' && (
             <div className="flex justify-between text-sm">
               <span className="text-pizza-muted">Tipo</span>
-              <span className="text-pizza-dark">Retirada no local</span>
+              <span className="text-pizza-ink">Retirada no local</span>
             </div>
           )}
         </div>
@@ -201,7 +199,7 @@ export default function OrderTrackingPage() {
           <button
             onClick={handleCancel}
             disabled={cancelling}
-            className="w-full border-2 border-red-200 text-red-500 rounded-2xl py-3.5 font-semibold text-sm flex items-center justify-center gap-2 press-effect transition-colors hover:bg-red-50 disabled:opacity-50"
+            className="w-full border-2 border-red-200 text-pizza-red rounded-2xl py-3.5 font-bold text-sm flex items-center justify-center gap-2 press-effect transition-colors hover:bg-brand-50 disabled:opacity-50"
           >
             <XCircle size={18} />
             {cancelling ? 'Cancelando...' : 'Cancelar pedido'}

@@ -1,7 +1,7 @@
 import { cn } from '../../utils/cn'
 
 export function Skeleton({ className }: { className?: string }) {
-  return <div className={cn('shimmer rounded-2xl bg-gray-200', className)} />
+  return <div className={cn('shimmer rounded-2xl bg-pizza-line', className)} />
 }
 
 export function FlavorCardSkeleton() {

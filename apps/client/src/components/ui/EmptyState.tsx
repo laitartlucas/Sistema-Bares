@@ -11,12 +11,16 @@ interface EmptyStateProps {
 
 export function EmptyState({ icon, title, description, action, className }: EmptyStateProps) {
   return (
-    <div className={cn('flex flex-col items-center justify-center text-center py-16 px-6 gap-4', className)}>
-      <div className="w-24 h-24 rounded-4xl bg-brand-flame-soft flex items-center justify-center text-pizza-red text-4xl shadow-card">
+    <div className={cn(
+      'flex flex-col items-center justify-center text-center py-16 px-6 gap-4',
+      'bg-white border-2 border-dashed border-pizza-border rounded-4xl',
+      className,
+    )}>
+      <div className="w-20 h-20 rounded-full bg-pizza-honey flex items-center justify-center text-pizza-red text-3xl">
         {icon}
       </div>
       <div>
-        <h3 className="font-display font-extrabold text-pizza-dark text-xl">{title}</h3>
+        <h3 className="font-display text-2xl text-pizza-dark">{title}</h3>
         {description && <p className="text-sm text-pizza-muted mt-1">{description}</p>}
       </div>
       {action}
